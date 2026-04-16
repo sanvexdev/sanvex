@@ -16,4 +16,12 @@ return [
         'times' => 3,
         'sleep_ms' => 1000,
     ],
+
+    'mcp' => [
+        /*
+         * Allow the RunScriptTool to execute arbitrary PHP expressions.
+         * MUST remain false in production. Only enable in trusted, isolated environments.
+         */
+        'allow_run_script' => env('SANVEX_MCP_ALLOW_RUN_SCRIPT', false),
+    ],
 ];

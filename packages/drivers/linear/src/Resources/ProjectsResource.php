@@ -16,8 +16,10 @@ class ProjectsResource extends BaseResource
 
     public function get(array $args): array
     {
-        $id = $args['id'];
-        $query = "{ project(id: \"{$id}\") { id name description } }";
-        return $this->driver->post(self::BASE_URL, ['query' => $query]);
+        $query = '{ project(id: $id) { id name description } }';
+        return $this->driver->post(self::BASE_URL, [
+            'query' => $query,
+            'variables' => ['id' => $args['id']],
+        ]);
     }
 }

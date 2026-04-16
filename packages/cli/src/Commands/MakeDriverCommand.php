@@ -21,9 +21,13 @@ class MakeDriverCommand extends Command
             return self::FAILURE;
         }
 
-        mkdir($packageDir . '/src/Resources/Db', 0755, true);
-        mkdir($packageDir . '/src/Auth', 0755, true);
-        mkdir($packageDir . '/tests/Unit', 0755, true);
+        if (!mkdir($packageDir . '/src/Resources/Db', 0755, true)
+            || !mkdir($packageDir . '/src/Auth', 0755, true)
+            || !mkdir($packageDir . '/tests/Unit', 0755, true)
+        ) {
+            $this->error("Failed to create driver directories in [{$packageDir}]. Check permissions.");
+            return self::FAILURE;
+        }
 
         // composer.json
         file_put_contents($packageDir . '/composer.json', json_encode([

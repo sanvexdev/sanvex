@@ -16,9 +16,11 @@ class IssuesResource extends BaseResource
 
     public function get(array $args): array
     {
-        $id = $args['id'];
-        $query = "{ issue(id: \"{$id}\") { id title description state { name } } }";
-        return $this->driver->post(self::BASE_URL, ['query' => $query]);
+        $query = '{ issue(id: $id) { id title description state { name } } }';
+        return $this->driver->post(self::BASE_URL, [
+            'query' => $query,
+            'variables' => ['id' => $args['id']],
+        ]);
     }
 
     public function create(array $args): array

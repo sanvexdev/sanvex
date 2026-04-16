@@ -21,6 +21,9 @@ class SlackDriver extends BaseDriver
     public array $authTypes = ['api_key', 'oauth2'];
     public string $defaultAuthType = 'api_key';
 
+    /** Maximum age of a webhook request in seconds before it is rejected as a replay. */
+    private const REPLAY_WINDOW_SECONDS = 300;
+
     public function messages(): MessagesResource
     {
         return new MessagesResource($this);
@@ -59,7 +62,7 @@ class SlackDriver extends BaseDriver
             ? ($normalizedHeaders['x-slack-request-timestamp'][0] ?? '')
             : ($normalizedHeaders['x-slack-request-timestamp'] ?? '');
 
-        if (abs(time() - (int) $timestamp) > 300) {
+        if (abs(time() - (int) $timestamp) > self::REPLAY_WINDOW_SECONDS) {
             return false;
         }
 

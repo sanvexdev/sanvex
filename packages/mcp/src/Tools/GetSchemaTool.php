@@ -45,7 +45,7 @@ class GetSchemaTool
                 'name' => $param->getName(),
                 'type' => $param->getType()?->getName() ?? 'mixed',
                 'required' => !$param->isOptional(),
-                'default' => $param->isOptional() ? $param->getDefaultValue() : null,
+                'default' => $param->isOptional() && $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null,
             ];
         }
 
