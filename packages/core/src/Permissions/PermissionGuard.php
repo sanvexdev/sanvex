@@ -53,8 +53,17 @@ class PermissionGuard
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        } catch (\Throwable) {
-            // If DB not available, return URL anyway
+        } catch (\Throwable $e) {
+            // Log the failure so operators know the permission system is degraded.
+            if (class_exists(\Illuminate\Support\Facades\Facade::class) && \Illuminate\Support\Facades\Facade::getFacadeApplication()) {
+                \Illuminate\Support\Facades\Log::error('sanvex permission record failed to save', [
+                    'driver' => $driver,
+                    'action' => "{$resource}.{$action}",
+                    'error' => $e->getMessage(),
+                ]);
+            }
+            // Return URL anyway so the caller can still surface an approval request,
+            // but the token won't be persisted — the approval flow will be unable to match it.
         }
 
         $baseUrl = config('sanvex.permissions.approval_url', '/sanvex/approve');

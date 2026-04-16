@@ -20,9 +20,16 @@ class KeyManager
                 'encrypted_value' => $encryptedValue,
                 'encrypted_dek' => $encryptedDek,
                 'updated_at' => now(),
-                'created_at' => now(),
             ]
         );
+
+        // Set created_at only on first insert (not on updates) via separate upsert logic
+        DB::table('sv_accounts')
+            ->where('tenant_id', $tenantId)
+            ->where('driver', $driver)
+            ->where('key_name', $key)
+            ->whereNull('created_at')
+            ->update(['created_at' => now()]);
     }
 
     public function getCredential(string $tenantId, string $driver, string $key): ?string

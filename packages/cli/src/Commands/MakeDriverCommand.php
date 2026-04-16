@@ -21,12 +21,18 @@ class MakeDriverCommand extends Command
             return self::FAILURE;
         }
 
-        if (!mkdir($packageDir . '/src/Resources/Db', 0755, true)
-            || !mkdir($packageDir . '/src/Auth', 0755, true)
-            || !mkdir($packageDir . '/tests/Unit', 0755, true)
-        ) {
-            $this->error("Failed to create driver directories in [{$packageDir}]. Check permissions.");
-            return self::FAILURE;
+        // Create all required subdirectories. The deepest paths imply parent creation.
+        $dirs = [
+            $packageDir . '/src/Resources/Db',
+            $packageDir . '/src/Webhooks',
+            $packageDir . '/src/Auth',
+            $packageDir . '/tests/Unit',
+        ];
+        foreach ($dirs as $dir) {
+            if (!mkdir($dir, 0755, true) && !is_dir($dir)) {
+                $this->error("Failed to create directory [{$dir}]. Check permissions.");
+                return self::FAILURE;
+            }
         }
 
         // composer.json

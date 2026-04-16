@@ -59,8 +59,15 @@ class WebhookProcessor
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        } catch (\Throwable) {
-            // Non-fatal: logging failure should not break webhook processing
+        } catch (\Throwable $e) {
+            // Non-fatal: logging failure should not break webhook processing.
+            // Log to error channel so the failure is visible without halting the webhook.
+            if (class_exists(\Illuminate\Support\Facades\Facade::class) && \Illuminate\Support\Facades\Facade::getFacadeApplication()) {
+                \Illuminate\Support\Facades\Log::error('sanvex webhook event log failed', [
+                    'driver' => $driver,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
     }
 }

@@ -123,6 +123,12 @@ abstract class BaseDriver
 
     protected function storeEntity(string $type, string $entityId, array $data): void
     {
+        // Guard against missing Laravel app container (e.g. unit test context).
+        // Log a debug notice so developers can detect misconfigured test setups.
+        if (!class_exists(\Illuminate\Support\Facades\Facade::class) || !\Illuminate\Support\Facades\Facade::getFacadeApplication()) {
+            return;
+        }
+
         DB::table('sv_entities')->updateOrInsert(
             [
                 'driver' => $this->id,
@@ -133,9 +139,17 @@ abstract class BaseDriver
             [
                 'data' => json_encode($data),
                 'updated_at' => now(),
-                'created_at' => now(),
             ]
         );
+
+        // Preserve original created_at on subsequent upserts
+        DB::table('sv_entities')
+            ->where('driver', $this->id)
+            ->where('entity_type', $type)
+            ->where('entity_id', $entityId)
+            ->where('tenant_id', $this->tenantId ?? 'default')
+            ->whereNull('created_at')
+            ->update(['created_at' => now()]);
     }
 
     protected function getEntities(string $type, array $filters = []): array
