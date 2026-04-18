@@ -36,4 +36,13 @@ return [
     'permissions' => [
         'approval_url' => env('SANVEX_APPROVAL_URL', '/sanvex/approve'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | AI MCP Configuration
+    |--------------------------------------------------------------------------
+    */
+    'mcp' => [
+        'allow_run_script' => env('SANVEX_MCP_ALLOW_RUN_SCRIPT', false),
+    ],
 ];
