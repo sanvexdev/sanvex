@@ -8,8 +8,15 @@ class EncryptionService
 {
     private const CIPHER = 'AES-256-CBC';
     private const IV_LENGTH = 16;
+    private readonly string $kek;
 
-    public function __construct(private readonly string $kek) {}
+    public function __construct(string $kek)
+    {
+        if (str_starts_with($kek, 'base64:')) {
+            $kek = substr($kek, 7);
+        }
+        $this->kek = $kek;
+    }
 
     public function generateDek(): string
     {
