@@ -12,8 +12,11 @@ use Sanvex\Drivers\Gmail\Resources\ThreadsResource;
 class GmailDriver extends BaseDriver
 {
     public string $id = 'gmail';
+
     public string $name = 'Gmail';
+
     public array $authTypes = ['oauth2'];
+
     public string $defaultAuthType = 'oauth2';
 
     public function messages(): MessagesResource

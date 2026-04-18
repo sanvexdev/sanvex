@@ -97,28 +97,28 @@ abstract class BaseDriver
         return $this->httpClient;
     }
 
-    protected function get(string $url, array $params = []): array
+    public function get(string $url, array $params = []): array
     {
         $response = $this->httpClient()->get($url, ['query' => $params]);
 
         return json_decode((string) $response->getBody(), true) ?? [];
     }
 
-    protected function post(string $url, array $data = []): array
+    public function post(string $url, array $data = []): array
     {
         $response = $this->httpClient()->post($url, ['json' => $data]);
 
         return json_decode((string) $response->getBody(), true) ?? [];
     }
 
-    protected function put(string $url, array $data = []): array
+    public function put(string $url, array $data = []): array
     {
         $response = $this->httpClient()->put($url, ['json' => $data]);
 
         return json_decode((string) $response->getBody(), true) ?? [];
     }
 
-    protected function delete(string $url): array
+    public function delete(string $url): array
     {
         $response = $this->httpClient()->delete($url);
 
