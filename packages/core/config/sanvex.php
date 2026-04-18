@@ -24,4 +24,16 @@ return [
     'drivers' => [
         // \Sanvex\Core\Drivers\ExampleDriver::class
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Permissions Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the Sanvex PermissionGuard module.
+    |
+    */
+    'permissions' => [
+        'approval_url' => env('SANVEX_APPROVAL_URL', '/sanvex/approve'),
+    ],
 ];

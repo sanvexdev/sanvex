@@ -2,9 +2,11 @@
 
 namespace Sanvex\Core;
 
+use Sanvex\Core\DTOs\WebhookResult;
 use Sanvex\Core\Encryption\EncryptionService;
 use Sanvex\Core\Encryption\KeyManager;
 use Sanvex\Core\Exceptions\ConnectorException;
+use Sanvex\Core\Webhooks\WebhookProcessor;
 
 class SanvexManager
 {
@@ -71,6 +73,12 @@ class SanvexManager
     public function getKeyManager(): ?KeyManager
     {
         return $this->keyManager;
+    }
+
+    public function processWebhook(array $headers, array $payload): WebhookResult
+    {
+        $processor = new WebhookProcessor();
+        return $processor->process($headers, $payload, $this->driverInstances);
     }
 
     public function __call(string $driver, array $args): BaseDriver
