@@ -3,6 +3,9 @@
 namespace Sanvex\Mcp;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
+use Sanvex\Mcp\Commands\McpStdioCommand;
+use Sanvex\Mcp\Http\Controllers\McpSseController;
 use Sanvex\Core\SanvexManager;
 use Sanvex\Mcp\Tools\GetSchemaTool;
 use Sanvex\Mcp\Tools\ListOperationsTool;
@@ -17,6 +20,20 @@ class McpServiceProvider extends ServiceProvider
         $this->app->singleton(ListOperationsTool::class, fn ($app) => new ListOperationsTool($app->make(SanvexManager::class)));
         $this->app->singleton(GetSchemaTool::class, fn ($app) => new GetSchemaTool($app->make(SanvexManager::class)));
         $this->app->singleton(RunScriptTool::class, fn ($app) => new RunScriptTool($app->make(SanvexManager::class)));
+    }
+
+    public function boot(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                McpStdioCommand::class,
+            ]);
+        }
+
+        if (config('sanvex.mcp.enable_server', false)) {
+            Route::get('/sanvex/mcp/sse', [McpSseController::class, 'connect']);
+            Route::post('/sanvex/mcp/message', [McpSseController::class, 'message']);
+        }
     }
 
     public function getTools(): array

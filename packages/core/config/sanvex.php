@@ -43,6 +43,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'mcp' => [
+        'enable_server' => env('SANVEX_MCP_ENABLE_SERVER', false),
         'allow_run_script' => env('SANVEX_MCP_ALLOW_RUN_SCRIPT', false),
     ],
 ];
