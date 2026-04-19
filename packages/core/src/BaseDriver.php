@@ -6,6 +6,8 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Facade;
 use Sanvex\Core\Auth\KeyBuilder;
+use Sanvex\Core\Auth\OAuthManager;
+use Sanvex\Core\Auth\OAuthProviderConfig;
 use Sanvex\Core\DTOs\WebhookResult;
 use Sanvex\Core\Encryption\KeyManager;
 
@@ -27,6 +29,8 @@ abstract class BaseDriver
 
     protected ?KeyBuilder $keyBuilderInstance = null;
 
+    protected ?OAuthManager $oauthManagerInstance = null;
+
     private ?Client $httpClient = null;
 
     abstract public function handleWebhook(array $headers, array|string $payload): WebhookResult;
@@ -36,6 +40,23 @@ abstract class BaseDriver
     public function isConfigured(): bool
     {
         return ! empty($this->getToken());
+    }
+
+    public function oauthConfig(): ?OAuthProviderConfig
+    {
+        return null;
+    }
+
+    public function oauth(): OAuthManager
+    {
+        if (! $this->oauthManagerInstance) {
+            $this->oauthManagerInstance = new OAuthManager(
+                $this->id,
+                $this->keyManager
+            );
+        }
+
+        return $this->oauthManagerInstance;
     }
 
     public function setManager(SanvexManager $manager): static
@@ -86,16 +107,27 @@ abstract class BaseDriver
         return $this->keys()->getToken();
     }
 
+    protected function defaultHeaders(): array
+    {
+        return [];
+    }
+
     protected function httpClient(): Client
     {
         if (! $this->httpClient) {
+            if ($config = $this->oauthConfig()) {
+                $this->oauth()->refreshIfExpired($config);
+            }
+
+            $headers = array_merge([
+                'Authorization' => 'Bearer '.$this->getToken(),
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ], $this->defaultHeaders());
+
             $this->httpClient = new Client([
                 'timeout' => $this->config['timeout'] ?? 30,
-                'headers' => [
-                    'Authorization' => 'Bearer '.$this->getToken(),
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                ],
+                'headers' => $headers,
             ]);
         }
 
@@ -119,6 +151,13 @@ abstract class BaseDriver
     public function put(string $url, array $data = []): array
     {
         $response = $this->httpClient()->put($url, ['json' => $data]);
+
+        return json_decode((string) $response->getBody(), true) ?? [];
+    }
+
+    public function patch(string $url, array $data = []): array
+    {
+        $response = $this->httpClient()->patch($url, ['json' => $data]);
 
         return json_decode((string) $response->getBody(), true) ?? [];
     }
