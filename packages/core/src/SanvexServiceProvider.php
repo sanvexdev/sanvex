@@ -3,6 +3,8 @@
 namespace Sanvex\Core;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
+use Sanvex\Core\Http\Controllers\WebhookController;
 
 class SanvexServiceProvider extends ServiceProvider
 {
@@ -22,5 +24,8 @@ class SanvexServiceProvider extends ServiceProvider
     {
         // Load package migrations (if present) so they can be published/run by the application.
         $this->loadMigrationsFrom(__DIR__ . '/Database/migrations');
+
+        // Automatically register the generic webhook endpoint natively as a stateless API
+        Route::post('/sanvex/webhook', [WebhookController::class, 'handle']);
     }
 }
