@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 
 env:
+  # Action reads GITHUB_TOKEN; ACCESS_TOKEN should be a PAT secret with write access to split repos.
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
 jobs:

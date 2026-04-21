@@ -21,6 +21,7 @@ Sanvex is developed in a single monorepo:
 
 Each package is split automatically into its own read-only repository via `.github/workflows/split-packages.yml`.
 To enable pushing split updates, set `ACCESS_TOKEN` in repository secrets with permission to push to the split repositories.
+Contributions and pull requests should be opened against this monorepo (the split repositories are mirrors).
 
 ## 📦 Supported Drivers
 
