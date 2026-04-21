@@ -40,16 +40,19 @@ jobs:
 
       - if: "!startsWith(github.ref, 'refs/tags/')"
         uses: danharrin/monorepo-split-github-action@v2.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           package_directory: '${{ matrix.package.local_path }}'
           repository_organization: 'sanvexdev'
           repository_name: '${{ matrix.package.split_repository }}'
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
-          access_token: ${{ secrets.ACCESS_TOKEN }}
 
       - if: "startsWith(github.ref, 'refs/tags/')"
         uses: danharrin/monorepo-split-github-action@v2.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag: ${{ github.ref_name }}
           package_directory: '${{ matrix.package.local_path }}'
@@ -57,4 +60,3 @@ jobs:
           repository_name: '${{ matrix.package.split_repository }}'
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
-          access_token: ${{ secrets.ACCESS_TOKEN }}
