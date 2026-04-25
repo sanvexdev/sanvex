@@ -4,6 +4,7 @@ namespace Sanvex\Cli\Commands;
 
 use Illuminate\Console\Command;
 use Sanvex\Core\SanvexManager;
+use Sanvex\Core\Tenancy\Owner;
 
 class SetupCommand extends Command
 {
@@ -11,6 +12,8 @@ class SetupCommand extends Command
                             {driver : The driver to set up (e.g. slack, github)}
                             {--api-key= : API key or token}
                             {--bot-token= : Bot token (for Slack)}
+                            {--owner-type= : Owner type for tenant-scoped credentials}
+                            {--owner-id= : Owner id for tenant-scoped credentials}
                             {--backfill : Run backfill after setup}';
 
     protected $description = 'Set up a driver integration with credentials';
@@ -18,9 +21,10 @@ class SetupCommand extends Command
     public function handle(SanvexManager $connector): int
     {
         $driverId = $this->argument('driver');
+        $owner = Owner::fromTypeAndId($this->option('owner-type'), $this->option('owner-id'));
 
         try {
-            $driver = $connector->resolveDriver($driverId);
+            $driver = $connector->for($owner)->resolveDriver($driverId);
         } catch (\Throwable $e) {
             $this->error("Driver [{$driverId}] is not registered. Make sure the driver package is installed.");
             return self::FAILURE;
@@ -41,10 +45,18 @@ class SetupCommand extends Command
         }
 
         if ($this->option('backfill')) {
-            $this->call('sanvex:backfill', ['driver' => $driverId]);
+            $this->call('sanvex:backfill', [
+                'driver' => $driverId,
+                '--owner-type' => $owner->isGlobal() ? null : $owner->type(),
+                '--owner-id' => $owner->isGlobal() ? null : $owner->id(),
+            ]);
         }
 
-        $this->info("Driver [{$driverId}] setup complete.");
+        $scope = $owner->isGlobal()
+            ? 'global/default'
+            : $owner->type().'/'.$owner->id();
+
+        $this->info("Driver [{$driverId}] setup complete for owner [{$scope}].");
         return self::SUCCESS;
     }
 }
