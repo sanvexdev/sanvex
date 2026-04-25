@@ -110,12 +110,9 @@ class OAuthManager
 
         $cacheKey = $this->nonceCacheKey($nonce);
 
-        if (! Cache::has($cacheKey)) {
+        if (Cache::pull($cacheKey) === null) {
             return null;
         }
-
-        Cache::forget($cacheKey);
-
         try {
             return Owner::fromTypeAndId($type, $id);
         } catch (\Throwable) {
