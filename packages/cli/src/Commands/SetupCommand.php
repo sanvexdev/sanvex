@@ -61,11 +61,16 @@ class SetupCommand extends Command
         }
 
         if ($this->option('backfill')) {
-            $this->call('sanvex:backfill', [
+            $backfillArguments = [
                 'driver' => $driverId,
-                '--owner-type' => $owner->isGlobal() ? null : $owner->type(),
-                '--owner-id' => $owner->isGlobal() ? null : $owner->id(),
-            ]);
+            ];
+
+            if (! $owner->isGlobal()) {
+                $backfillArguments['--owner-type'] = $owner->type();
+                $backfillArguments['--owner-id'] = $owner->id();
+            }
+
+            $this->call('sanvex:backfill', $backfillArguments);
         }
 
         $scope = $owner->isGlobal()
