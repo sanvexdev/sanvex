@@ -127,14 +127,20 @@ class OAuthManager
 
     private function resolveAppKey(): string
     {
-        $appKey = (string) config('app.key', 'sanvex-default-key');
+        $appKey = config('app.key');
+
+        if (! is_string($appKey) || trim($appKey) === '') {
+            throw new \RuntimeException('OAuth state signing requires a non-empty app.key configuration value.');
+        }
 
         if (str_starts_with($appKey, 'base64:')) {
             $decoded = base64_decode(substr($appKey, 7), true);
 
-            if ($decoded !== false && $decoded !== '') {
-                return $decoded;
+            if ($decoded === false || $decoded === '') {
+                throw new \RuntimeException('OAuth state signing requires a valid base64-encoded app.key configuration value.');
             }
+
+            return $decoded;
         }
 
         return $appKey;
