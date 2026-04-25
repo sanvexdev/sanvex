@@ -21,7 +21,23 @@ class SetupCommand extends Command
     public function handle(SanvexManager $connector): int
     {
         $driverId = $this->argument('driver');
-        $owner = Owner::fromTypeAndId($this->option('owner-type'), $this->option('owner-id'));
+        $ownerType = $this->option('owner-type');
+        $ownerId = $this->option('owner-id');
+
+        $ownerType = is_string($ownerType) && trim($ownerType) === '' ? null : $ownerType;
+        $ownerId = is_string($ownerId) && trim($ownerId) === '' ? null : $ownerId;
+
+        if (($ownerType === null) !== ($ownerId === null)) {
+            $this->error('Both --owner-type and --owner-id must be provided together.');
+            return self::FAILURE;
+        }
+
+        try {
+            $owner = Owner::fromTypeAndId($ownerType, $ownerId);
+        } catch (\InvalidArgumentException $e) {
+            $this->error('Invalid owner options provided. Please provide both --owner-type and --owner-id with non-empty values.');
+            return self::FAILURE;
+        }
 
         try {
             $driver = $connector->for($owner)->resolveDriver($driverId);
