@@ -1,196 +1,215 @@
-# 🚀 Sanvex
+# Sanvex
 
-**An AI-agentic ecosystem and unified API integration layer for Laravel.**
+Laravel integration layer for third-party APIs: one pattern (`driver` → `resource` → `action`), encrypted credentials, optional multi-tenant scoping, and hooks for AI (MCP stdio/SSE, generic tool payloads).
 
-Sanvex is a powerful Laravel package designed to provide a unified, developer-friendly interface for interacting with various third-party services (GitHub, Gmail, Linear, Notion, Slack). It is built specifically to be consumed by AI Agents via dynamic tool calling, but it can also be used directly within your application code.
+This repo is a monorepo (`packages/core`, `packages/cli`, `packages/mcp`, `packages/drivers/*`). Published packages use the `sanvex` vendor on Packagist; stable installs follow SemVer tags on this repo.
 
-## ✨ Features
+---
 
-- **Unified Interface (\`SanvexManager`)**: Interact with any supported service using a consistent \`Driver -> Resource -> Action\` pattern.
-- **AI Tool Calling Ready**: Designed from the ground up to be easily mapped to LLM function calls (e.g., OpenAI, Anthropic, Groq).
-- **Interactive CLI**: Easily configure API keys and check driver status via built-in Artisan commands.
-- **Secure Credential Storage**: Built-in encryption (\`EncryptionService\`) for storing API keys securely within your application database.
-- **Extensible Architecture**: Easily add new custom drivers and resources.
+## Quick install
 
-## 🧩 Monorepo Package Layout
-
-Sanvex is developed in a single monorepo:
-
-- Main packages: `packages/core`, `packages/cli`, `packages/mcp`
-- Driver packages: `packages/drivers/*` (e.g. `github`, `gmail`, `linear`, `notion`, `slack`)
-
-Each package is split automatically into its own read-only repository via `.github/workflows/split-packages.yml`.
-To enable pushing split updates, set `GH_PAT` in repository secrets with permission to push to the split repositories.
-Contributions and pull requests should be opened against this monorepo (the split repositories are mirrors).
-
-**Releases:** Stable versions on Packagist come from **SemVer git tags** on this monorepo (for example `v0.1.0`). Pushing a tag runs the split workflow and tags the matching read-only repos (for example `sanvexdev/core`), which Packagist then indexes as stable.
-
-## 📦 Supported Drivers
-
-Currently, Sanvex supports the following out-of-the-box integrations:
-
-- **GitHub** (Repositories, Issues, Pull Requests)
-- **Gmail** (Emails, Threads)
-- **Linear** (Issues, Projects)
-- **Notion** (Pages, Databases)
-- **Slack** (Channels, Messages, Users)
-
-## 🛠️ Installation
-
-### From Packagist (recommended)
-
-Install the core package in a Laravel app (works with default Composer `minimum-stability: stable` once a tagged release exists):
+**1. Require what you need**
 
 ```bash
 composer require sanvex/core:^0.1.0
+composer require sanvex/cli sanvex/mcp
+composer require sanvex/github sanvex/gmail sanvex/linear sanvex/notion sanvex/slack
 ```
 
-To track the default branch instead of a tagged release (dev stability), require it explicitly:
+Use `dev-main` (or path repos for local monorepo work) if you are not on a tagged release yet.
+
+**2. Migrate**
+
+Core registers migrations with Laravel. Run the app migration stack as usual:
 
 ```bash
-composer require sanvex/core:dev-main
+php artisan migrate
 ```
 
-Alternatively, set `"minimum-stability": "dev"` and `"prefer-stable": true` in your app’s root `composer.json`, then run `composer require sanvex/core`.
+Alternatively, the CLI can run only Sanvex migrations against the vendor path:
 
-Other split packages (CLI, MCP, drivers) are published under the `sanvex` vendor on Packagist the same way; pin each with a semver range when stable tags are available.
-
-### Local path (this monorepo)
-
-For development against a checkout of this repository, add a path repository in your app’s `composer.json` pointing at this monorepo root, then require the package you need (see each package’s `composer.json` under `packages/`).
-
-Make sure the Service Providers are successfully registered in your Laravel application (e.g., inside \`bootstrap/providers.php\`):
-
-```php
-\Sanvex\Core\SanvexServiceProvider::class,
-\Sanvex\Mcp\McpServiceProvider::class,
-\Sanvex\Drivers\GitHub\GitHubServiceProvider::class,
-// ... other drivers
+```bash
+php artisan sanvex:migrate
+# php artisan sanvex:migrate --fresh   # destructive reset of those migrations only
 ```
 
-## ⚙️ Setup & Configuration
+**3. Register drivers**
 
-Sanvex comes with a helpful CLI module to manage your driver connections.
+Official driver packages ship a `*ServiceProvider` that calls `SanvexManager::registerDriver()` on boot. With Composer [package discovery](https://laravel.com/docs/packages#package-discovery) enabled (default), you do **not** hand-list each driver in `bootstrap/providers.php` unless discovery is disabled.
 
-**1. List all available drivers:**
+Custom drivers: add the class to `config/sanvex.php` under `drivers`, or call `registerDriver()` from your own service provider after the manager is bound.
+
+**4. Configure credentials**
 
 ```bash
 php artisan sanvex:list
+php artisan sanvex:setup github --api-key="ghp_..."
 ```
 
-**2. Setup a specific driver:**
-This command prompts you to enter required credentials (e.g., API Key, OAuth tokens) or allows them inline.
+Tenant-scoped setup (stores keys against an owner):
 
 ```bash
-php artisan sanvex:setup github --api-key="your_api_key_here"
+php artisan sanvex:setup notion --api-key="secret_..." --owner-type=App\\Models\\Team --owner-id=1
 ```
 
-## 💻 Usage
+Optional: `php artisan sanvex:keygen` / `php artisan sanvex:backfill {driver}` (see CLI below).
 
-### Direct PHP Implementation
+---
 
-You can interact with the drivers simply using the \`SanvexManager\` via Dependency Injection.
+## Packages at a glance
+
+
+| Package       | Role                                                         |
+| ------------- | ------------------------------------------------------------ |
+| `sanvex/core` | `SanvexManager`, encryption, DB tables, webhooks, tenancy    |
+| `sanvex/cli`  | Artisan: setup, migrate, list, backfill, scaffolding         |
+| `sanvex/mcp`  | MCP server (stdio + optional HTTP SSE) exposing Sanvex tools |
+
+
+Require `sanvex/cli` only if you want those commands; require `sanvex/mcp` only if an agent or IDE will speak MCP.
+
+---
+
+## Configuration (`config/sanvex.php`)
+
+Merged from core. Publish a copy into your app:
+
+```bash
+php artisan vendor:publish --tag=sanvex-config
+```
+
+That writes `config/sanvex.php`. Laravel loads your file over the package defaults. You can still copy from `vendor/sanvex/core/config/sanvex.php` if you prefer not to use Artisan.
+
+
+| Key                        | Purpose                                                                           |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| `kek`                      | Key-encryption key for stored credentials. Defaults to `SANVEX_KEK` or `APP_KEY`. |
+| `drivers`                  | Extra driver classes to register (custom / in-app drivers).                       |
+| `permissions.approval_url` | Base URL segment for permission flows (`SANVEX_APPROVAL_URL`).                    |
+| `mcp.enable_server`        | When true, registers SSE MCP routes (`SANVEX_MCP_ENABLE_SERVER`).                 |
+| `mcp.allow_run_script`     | Gates the `sanvex_run_script` MCP tool (`SANVEX_MCP_ALLOW_RUN_SCRIPT`).           |
+| `driver_configs`           | Per-driver options (e.g. Notion OAuth vs API key under `driver_configs.notion`).  |
+
+
+Environment variables used in the default config include `SANVEX_KEK`, `SANVEX_APPROVAL_URL`, `SANVEX_MCP_ENABLE_SERVER`, `SANVEX_MCP_ALLOW_RUN_SCRIPT`, and Notion-related `NOTION_*` keys where applicable.
+
+---
+
+## Supported drivers (first-party)
+
+
+| Composer package | Driver id | Typical surface                     |
+| ---------------- | --------- | ----------------------------------- |
+| `sanvex/github`  | `github`  | Repositories, issues, pull requests |
+| `sanvex/gmail`   | `gmail`   | Messages, threads                   |
+| `sanvex/linear`  | `linear`  | Issues, projects                    |
+| `sanvex/notion`  | `notion`  | Pages, databases, blocks, search    |
+| `sanvex/slack`   | `slack`   | Channels, messages, users           |
+
+
+Each package’s `composer.json` declares its Laravel service provider for discovery.
+
+---
+
+## Use in PHP
 
 ```php
 use Sanvex\Core\SanvexManager;
 
-class GithubController extends Controller
+public function index(SanvexManager $manager)
 {
-    public function getRepos(SanvexManager $manager)
-    {
-        // 1. Resolve the driver
-        $github = $manager->resolveDriver("github");
+    $github = $manager->resolveDriver('github');
 
-        // 2. Access a resource module and perform an action
-        $repos = $github->repositories()->list([
-            "per_page" => 10
-        ]);
-
-        return response()->json($repos);
-    }
+    return $github->repositories()->list(['per_page' => 10]);
 }
 ```
 
-### 🤖 Using with AI Agents (Tool Calling)
+---
 
-Sanvex really shines when bridging your application to AI models. Instead of manually writing logic for every endpoint, you can expose a generic JSON \`sanvex_action\` tool to your LLM.
+## Multi-tenancy
 
-**Exposed JSON Tool Definition:**
+**Why:** In a SaaS or multi-workspace app, each customer has their own tokens and synced entities. Resolving a driver **for** an owner keeps credentials and DB-backed state partitioned instead of sharing one global integration.
+
+**How:** Pass an Eloquent model (or an object implementing `Sanvex\Core\Contracts\SanvexOwner`) into `for()` before `resolveDriver()`.
+
+```php
+// Per authenticated user
+$linear = $manager->for(auth()->user())->resolveDriver('linear');
+$issues = $linear->issues()->list(['limit' => 20]);
+```
+
+```php
+// Explicit owner key via CLI when storing credentials
+// php artisan sanvex:setup slack --bot-token=xoxb-... --owner-type=App\\Models\\Workspace --owner-id=42
+$slack = $manager->for($workspace)->resolveDriver('slack');
+```
+
+```php
+// Optional app-wide default owner binding
+app()->bind('sanvex.current_owner', fn () => auth()->user());
+$github = app(SanvexManager::class)->for(app('sanvex.current_owner'))->resolveDriver('github');
+```
+
+Global (single-tenant) behavior is unchanged: `resolveDriver('github')` is equivalent to `for(null)->resolveDriver('github')`.
+
+---
+
+## AI integration
+
+### Generic tool shape (any LLM)
+
+Expose one tool that mirrors Sanvex’s calling convention; your backend resolves the driver and forwards the call.
 
 ```json
 {
   "name": "sanvex_action",
-  "description": "Perform an action on an integrated driver resource to fetch or manipulate data.",
+  "description": "Call a Sanvex driver resource action.",
   "parameters": {
     "type": "object",
     "properties": {
-      "driver": {
-        "type": "string",
-        "description": "e.g., github, linear, notion"
-      },
-      "resource": {
-        "type": "string",
-        "description": "e.g., repositories, issues"
-      },
-      "action": { "type": "string", "description": "e.g., list, get, create" },
-      "args": {
-        "type": "object",
-        "description": "Key-value arguments for the action."
-      }
+      "driver": { "type": "string" },
+      "resource": { "type": "string" },
+      "action": { "type": "string" },
+      "args": { "type": "object" }
     },
     "required": ["driver", "resource", "action"]
   }
 }
 ```
 
-**Dynamic Execution Pipeline:**
-
 ```php
-$driverId = $instruction["driver"];      // e.g., "github"
-$resource = $instruction["resource"];    // e.g., "repositories"
-$action   = $instruction["action"];      // e.g., "list"
-$args     = $instruction["args"] ?? [];
-
-$driver = $manager->resolveDriver($driverId);
-
-// Effortlessly map LLM actions directly to Sanvex features
-$result = $driver->{$resource}()->{$action}($args);
-
-return $result;
+$driver = $manager->for($tenant)->resolveDriver($instruction['driver']);
+$result = $driver->{$instruction['resource']}()->{$instruction['action']}($instruction['args'] ?? []);
 ```
 
-### Multi-tenant usage
+For tenant-aware agents, resolve `$tenant` the same way you would for a normal HTTP request (session, JWT, etc.).
 
-Single-tenant usage remains unchanged:
+### MCP (Cursor, Claude Desktop, other stdio clients)
 
-```php
-$driver = $manager->resolveDriver('notion');
-```
+The MCP package registers `php artisan sanvex:mcp-stdio`, which runs a JSON-RPC loop over stdin/stdout. Point your client at the Laravel app’s PHP binary and that Artisan command; set `cwd` to the project root that contains `artisan`.
 
-For multi-tenant apps, use a tenant-scoped context with `for($owner)`.
-The owner can be an Eloquent model (for example `User`, `Team`, `Workspace`) or an object implementing `Sanvex\Core\Contracts\SanvexOwner`.
+Tools exposed by the server include `sanvex_list_operations`, `sanvex_get_schema`, `sanvex_setup`, and (if enabled in config) `sanvex_run_script`.
 
-```php
-use Sanvex\Core\SanvexManager;
+**HTTP SSE (optional):** set `SANVEX_MCP_ENABLE_SERVER=true` (and `mcp.enable_server` true) to register `GET /sanvex/mcp/sse` and `POST /sanvex/mcp/message` for SSE-based MCP transports.
 
-class CrmController extends Controller
-{
-  public function index(SanvexManager $manager)
-  {
-    $notion = $manager->for(auth()->user())->resolveDriver('notion');
+---
 
-    return $notion->pages()->list([
-      'page_size' => 10,
-    ]);
-  }
-}
-```
+## CLI reference
 
-Optional container sugar if your app centralizes owner resolution:
 
-```php
-app()->bind('sanvex.current_owner', fn () => auth()->user());
+| Command                     | Purpose                                                                                             |
+| --------------------------- | --------------------------------------------------------------------------------------------------- |
+| `sanvex:list`               | Registered drivers and auth metadata                                                                |
+| `sanvex:setup {driver}`     | Store credentials (options: `--api-key`, `--bot-token`, `--owner-type`, `--owner-id`, `--backfill`) |
+| `sanvex:migrate`            | Run Sanvex migrations from vendor path                                                              |
+| `sanvex:backfill {driver}`  | Pull API data into `sv_entities` (optional `--owner-type` / `--owner-id`)                           |
+| `sanvex:keygen`             | Helper for encryption/key material                                                                  |
+| `sanvex:make-driver {name}` | Scaffold a new driver package                                                                       |
+| `sanvex:mcp-stdio`          | Start MCP stdio server                                                                              |
 
-$owner = app('sanvex.current_owner');
-$github = app(SanvexManager::class)->for($owner)->resolveDriver('github');
-```
+
+---
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE) for more information.

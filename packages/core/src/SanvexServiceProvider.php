@@ -22,6 +22,10 @@ class SanvexServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->publishes([
+            __DIR__ . '/../config/sanvex.php' => config_path('sanvex.php'),
+        ], 'sanvex-config');
+
         // Load package migrations (if present) so they can be published/run by the application.
         $this->loadMigrationsFrom(__DIR__ . '/Database/migrations');
 
