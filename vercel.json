@@ -2,6 +2,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
+    { "source": "/", "destination": "/docs/getting-started/quickstart", "permanent": false },
     { "source": "/docs", "destination": "/docs/getting-started/quickstart", "permanent": false }
   ]
 }
