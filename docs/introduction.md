@@ -1,3 +1,7 @@
+---
+title: Introduction
+---
+
 # Introduction
 
 Sanvex gives Laravel apps a single surface for AI agents to call GitHub, Gmail, Linear, Notion, Slack, and custom drivers.

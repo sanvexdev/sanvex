@@ -1,4 +1,7 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/docs", "destination": "/docs/getting-started/quickstart", "permanent": false }
+  ]
 }

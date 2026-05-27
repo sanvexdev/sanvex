@@ -4,23 +4,23 @@ layout: home
 hero:
   name: Sanvex
   text: Laravel integrations for AI agents
-  tagline: One surface for GitHub, Gmail, Linear, Notion, Slack, and your own drivers.
+  tagline: GitHub, Gmail, Linear, Notion, Slack — one interface, one install.
   image:
     src: /logo.png
     alt: Sanvex
   actions:
     - theme: brand
-      text: Get started
-      link: /getting-started/quickstart
+      text: Get Started
+      link: /docs/getting-started/quickstart
     - theme: alt
-      text: View on GitHub
-      link: https://github.com/sanzgrapher/sanvex
+      text: GitHub
+      link: https://github.com/sanvexdev/sanvex
 
 features:
+  - title: One interface
+    details: Resolve any driver by name. Same API for GitHub, Notion, Slack, and custom drivers.
   - title: Managed auth
-    details: OAuth, API keys, and tenant-scoped credentials without rebuilding integrations.
+    details: API keys and OAuth tokens stored encrypted in your database, scoped per owner or team.
   - title: Agent-ready
-    details: Expose drivers to Laravel AI, MCP, and custom agent workflows.
-  - title: Laravel-native
-    details: Install with Composer, run migrations, and use familiar Artisan commands.
+    details: Expose drivers directly to Laravel AI, MCP, or your own agent workflows out of the box.
 ---

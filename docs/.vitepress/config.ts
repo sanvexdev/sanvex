@@ -1,24 +1,15 @@
 import {defineConfig} from 'vitepress';
 
-/**
- * Base path for assets and routes.
- * - GitHub Pages (project site): https://sanzgrapher.github.io/sanvex/ → '/sanvex/'
- * - Custom domain or Vercel at root: https://docs.example.com/ → '/'
- *
- * Set via env: VP_BASE=/sanvex/ npm run build
- * Local dev defaults to '/' (use VP_BASE=/sanvex/ npm run dev to match GitHub Pages).
- */
-const base = process.env.VP_BASE || '/';
-
 export default defineConfig({
   title: 'Sanvex',
   description: 'Laravel integrations for AI agents',
-  base,
   lang: 'en-US',
   cleanUrls: true,
+  rewrites: {
+    'getting-started/:page': 'docs/getting-started/:page',
+    'introduction': 'docs/introduction',
+  },
   head: [
-    // Context7 widget — replace data-library with your library id from context7.com
-    // Add allowed domains in Context7 dashboard (localhost + production URL).
     [
       'script',
       {
@@ -38,22 +29,21 @@ export default defineConfig({
     },
     siteTitle: 'Sanvex',
     nav: [
-      {text: 'Docs', link: '/'},
-      {text: 'GitHub', link: 'https://github.com/sanzgrapher/sanvex'},
+      {text: 'Docs', link: '/docs/getting-started/quickstart'},
+      {text: 'GitHub', link: 'https://github.com/sanvexdev/sanvex'},
     ],
     sidebar: [
-      {text: 'Welcome', link: '/'},
       {
         text: 'Getting Started',
         items: [
-          {text: 'Quickstart', link: '/getting-started/quickstart'},
-          {text: 'Installation', link: '/getting-started/installation'},
-          {text: 'Usage', link: '/getting-started/usage'},
+          {text: 'Quickstart', link: '/docs/getting-started/quickstart'},
+          {text: 'Installation', link: '/docs/getting-started/installation'},
+          {text: 'Usage', link: '/docs/getting-started/usage'},
         ],
       },
-      {text: 'Introduction', link: '/introduction'},
+      {text: 'Introduction', link: '/docs/introduction'},
     ],
-    socialLinks: [{icon: 'github', link: 'https://github.com/sanzgrapher/sanvex'}],
+    socialLinks: [{icon: 'github', link: 'https://github.com/sanvexdev/sanvex'}],
     search: {
       provider: 'local',
     },
