@@ -7,4 +7,6 @@
 composer.lock
 packages/*/composer.lock
 *.log
-**/docs/*
+/node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
