@@ -23,6 +23,7 @@ export default defineConfig({
       'script',
       {
         src: 'https://context7.com/widget.js',
+        defer: 'defer',
         'data-library': '/websites/sanvex_narayan-dhakal_np',
         'data-color': '#6366f1',
         'data-position': 'bottom-right',
