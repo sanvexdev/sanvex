@@ -16,6 +16,7 @@ export default defineConfig({
   base,
   lang: 'en-US',
   cleanUrls: true,
+  mpa: true,
   head: [
     // Context7 widget — replace data-library with your library id from context7.com
     // Add allowed domains in Context7 dashboard (localhost + production URL).
