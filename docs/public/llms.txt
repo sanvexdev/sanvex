@@ -4,8 +4,8 @@
 
 ## Documentation
 
-- [Welcome](https://sanvex.dev/)
-- [Quickstart](https://sanvex.dev/getting-started/quickstart)
-- [Installation](https://sanvex.dev/getting-started/installation)
-- [Usage](https://sanvex.dev/getting-started/usage)
-- [Introduction](https://sanvex.dev/introduction)
+- [Welcome](https://sanvex.narayan-dhakal.com.np/)
+- [Quickstart](https://sanvex.narayan-dhakal.com.np/getting-started/quickstart)
+- [Installation](https://sanvex.narayan-dhakal.com.np/getting-started/installation)
+- [Usage](https://sanvex.narayan-dhakal.com.np/getting-started/usage)
+- [Introduction](https://sanvex.narayan-dhakal.com.np/introduction)
