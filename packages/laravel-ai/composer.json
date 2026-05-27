@@ -1,0 +1,26 @@
+{
+    "name": "sanvex/laravel-ai",
+    "description": "Laravel AI SDK integration for Sanvex drivers.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "sanvex/core": "*",
+        "laravel/ai": "^0.6.0",
+        "illuminate/support": "^12.0 || ^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sanvex\\LaravelAi\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sanvex\\LaravelAi\\SanvexLaravelAiServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

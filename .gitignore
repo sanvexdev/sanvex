@@ -5,4 +5,6 @@
 .phpunit.cache
 .phpunit.result.cache
 composer.lock
+packages/*/composer.lock
 *.log
+**/docs/*

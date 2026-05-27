@@ -4,12 +4,17 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "sanvex/core": "*"
     },
     "require-dev": {
-        "orchestra/testbench": "^10.0",
         "phpunit/phpunit": "^11.0",
-        "pestphp/pest": "^3.0"
+        "orchestra/testbench": "^10.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sanvex\\Core\\Tests\\": "packages/core/tests/"
+        }
     },
     "repositories": [
         {
@@ -21,26 +26,11 @@
             "url": "packages/drivers/*"
         }
     ],
-    "autoload": {
-        "psr-4": {
-            "Sanvex\\Core\\": "packages/core/src/",
-            "Sanvex\\Cli\\": "packages/cli/src/",
-            "Sanvex\\Mcp\\": "packages/mcp/src/",
-            "Sanvex\\Drivers\\Gmail\\": "packages/drivers/gmail/src/",
-            "Sanvex\\Drivers\\GitHub\\": "packages/drivers/github/src/",
-            "Sanvex\\Drivers\\Linear\\": "packages/drivers/linear/src/",
-            "Sanvex\\Drivers\\Notion\\": "packages/drivers/notion/src/",
-            "Sanvex\\Drivers\\Slack\\": "packages/drivers/slack/src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Sanvex\\Core\\Tests\\": "packages/core/tests/"
-        }
-    },
     "config": {
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

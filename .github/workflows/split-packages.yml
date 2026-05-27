@@ -23,6 +23,8 @@ jobs:
             split_repository: 'cli'
           - local_path: 'packages/mcp'
             split_repository: 'mcp'
+          - local_path: 'packages/laravel-ai'
+            split_repository: 'laravel-ai'
           - local_path: 'packages/drivers/github'
             split_repository: 'github'
           - local_path: 'packages/drivers/gmail'

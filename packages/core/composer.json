@@ -13,6 +13,9 @@
         "illuminate/console": "^12.0 || ^13.0",
         "guzzlehttp/guzzle": "^7.0"
     },
+    "suggest": {
+        "sanvex/laravel-ai": "Optional: Laravel AI tool integration for Sanvex drivers."
+    },
     "require-dev": {
         "pestphp/pest": "^3.0",
         "orchestra/testbench": "^10.0"
@@ -25,6 +28,11 @@
     "autoload-dev": {
         "psr-4": {
             "Sanvex\\Core\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     },
     "extra": {

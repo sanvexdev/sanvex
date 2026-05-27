@@ -3,16 +3,23 @@
 namespace Sanvex\Drivers\Notion\Resources;
 
 use Sanvex\Core\BaseResource;
+use Sanvex\Core\Attributes\Operation;
 
 class PagesResource extends BaseResource
 {
     private const BASE_URL = 'https://api.notion.com/v1';
 
+    #[Operation(
+        description: 'Get a Notion page by ID.',
+        readOnly: true,
+        schema: [
+            'id' => ['type' => 'string', 'required' => true, 'description' => 'Page ID or URL'],
+        ],
+    )]
     public function get(array $args): array
     {
         $id = $args['id'] ?? $args['page_id'] ?? null;
 
-        // If AI passes a full URL instead of an ID, extract the 32-character Notion ID
         if (is_string($id) && preg_match('/([a-f0-9]{32})(?:\?|$)/i', str_replace('-', '', $id), $matches)) {
             $id = $matches[1];
         }
@@ -20,31 +27,50 @@ class PagesResource extends BaseResource
         return $this->driver->get(self::BASE_URL . "/pages/{$id}");
     }
 
+    #[Operation(
+        description: 'Retrieve a Notion page (alias for get).',
+        readOnly: true,
+        schema: [
+            'id' => ['type' => 'string', 'required' => true, 'description' => 'Page ID or URL'],
+        ],
+    )]
     public function retrieve(array $args): array
     {
         return $this->get($args);
     }
 
+    #[Operation(
+        description: 'List pages in the Notion workspace.',
+        readOnly: true,
+        schema: [
+            'page_size' => ['type' => 'integer', 'description' => 'Max results to return (default 100)'],
+        ],
+    )]
     public function list(array $args = []): array
     {
-        // Intercept AI asking to list pages and use the search endpoint instead
         return $this->driver->search()->search([
             'filter' => ['value' => 'page', 'property' => 'object'],
             'page_size' => $args['page_size'] ?? 100
         ]);
     }
 
+    #[Operation(
+        description: 'Create a new Notion page. If no parent is provided, one will be auto-resolved.',
+        schema: [
+            'title' => ['type' => 'string', 'description' => 'Page title'],
+            'parent' => ['type' => 'object', 'description' => 'Parent object with database_id or page_id'],
+            'properties' => ['type' => 'object', 'description' => 'Page properties (Notion format)'],
+            'content' => ['type' => 'object', 'description' => 'Simplified content block with type and text'],
+        ],
+    )]
     public function create(array $args): array
     {
-        // Check if the AI provided a fake dummy parent ID because it didn't know one
         $isDummyParent = false;
         if (isset($args['parent'])) {
             $parentId = $args['parent']['database_id'] ?? $args['parent']['page_id'] ?? '';
             $isDummyParent = empty($parentId) || str_contains((string)$parentId, 'your_') || str_contains((string)$parentId, 'selected_') || str_contains((string)$parentId, 'dummy');
         }
 
-        // If the AI/user tries to create a page but didn't provide a parent context,
-        // we'll automatically search the workspace for a default parent (first accessible page).
         if (!isset($args['parent']) || $isDummyParent) {
             $searchResource = $this->driver->search();
             $results = $searchResource->search([
@@ -53,7 +79,6 @@ class PagesResource extends BaseResource
             ]);
             
             if (empty($results['results'])) {
-                // If no page found, try for a database
                 $results = $searchResource->search([
                     'filter' => ['value' => 'database', 'property' => 'object'],
                     'page_size' => 1
@@ -73,7 +98,6 @@ class PagesResource extends BaseResource
             }
         }
         
-        // Ensure proper properties format if simple 'title' string is passed
         if (isset($args['title']) && !isset($args['properties']['title'])) {
             $args['properties'] = $args['properties'] ?? [];
             $args['properties']['title'] = [
@@ -88,7 +112,6 @@ class PagesResource extends BaseResource
             unset($args['title']);
         }
 
-        // Handle simplified 'content' argument from AI
         if (isset($args['content']) && !isset($args['children'])) {
             $contentNode = $args['content'];
             $contentType = $contentNode['type'] ?? 'paragraph';
@@ -118,6 +141,13 @@ class PagesResource extends BaseResource
         return $this->driver->post(self::BASE_URL . '/pages', $args);
     }
 
+    #[Operation(
+        description: 'Update a Notion page properties.',
+        schema: [
+            'id' => ['type' => 'string', 'required' => true, 'description' => 'Page ID to update'],
+            'properties' => ['type' => 'object', 'description' => 'Properties to update'],
+        ],
+    )]
     public function update(array $args): array
     {
         $id = $args['id'];
