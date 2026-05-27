@@ -4,7 +4,9 @@ title: Usage
 
 # Usage
 
-Resolve a driver and call a resource action:
+Sanvex follows one pattern everywhere: resolve a driver, pick a resource, call an action.
+
+## Basic pattern
 
 ```php
 use Sanvex\Core\SanvexManager;
@@ -17,22 +19,72 @@ public function repos(SanvexManager $manager)
 }
 ```
 
-## Multi-tenancy
+Each driver exposes resources as methods on the driver instance:
 
 ```php
-$notion = $manager->for(auth()->user())->resolveDriver('notion');
+$github = $manager->resolveDriver('github');
+$github->repositories()->get(['owner' => 'laravel', 'repo' => 'framework']);
+$github->issues()->list(['owner' => 'laravel', 'repo' => 'framework']);
+$github->pullRequests()->create([...]);
+```
+
+## Check configuration
+
+Before calling a driver, verify credentials are stored:
+
+```php
+$driver = $manager->resolveDriver('github');
+
+if (! $driver->isConfigured()) {
+    // Run: php artisan sanvex:setup github --api-key=...
+}
+```
+
+## Multi-tenancy
+
+Scope credentials and driver instances to an owner:
+
+```php
+$notion = $manager
+    ->for(auth()->user())
+    ->resolveDriver('notion');
+
 $pages = $notion->pages()->list(['page_size' => 10]);
 ```
 
-## MCP (optional)
+See [Tenancy](../concepts/tenancy).
 
-```bash
-php artisan sanvex:mcp-stdio
+## Local database access
+
+Some drivers cache entities in `sv_entities`. Access them via `db()`:
+
+```php
+$github = $manager->resolveDriver('github');
+$repos = $github->db()->repositories()->list();
 ```
 
-## Typical workflow
+Note: DB resource queries filter by `driver` and `entity_type` but not by owner in the base implementation.
 
-1. Add or update docs for new drivers and operations
-2. Publish docs (GitHub Pages or Vercel)
-3. Test agent flows against real credentials in staging
-4. Refine examples based on support questions
+## Webhooks
+
+Sanvex registers `POST /sanvex/webhook` for incoming webhook payloads. Drivers implement `handleWebhook()` and `verifySignature()`.
+
+## Agent integration
+
+Expose Sanvex to AI agents through:
+
+- [Laravel AI](../integrations/laravel-ai) — `SanvexAi` tools for Laravel AI SDK agents
+- [MCP](../integrations/mcp) — stdio or HTTP SSE server for MCP clients
+
+## Discover available operations
+
+```bash
+php artisan sanvex:list
+```
+
+For MCP clients, use the `sanvex_list_operations` tool after starting `php artisan sanvex:mcp-stdio`.
+
+## Next steps
+
+- [Drivers](../drivers/) — per-driver setup and API surface
+- [Authentication](../concepts/authentication) — token and OAuth setup
