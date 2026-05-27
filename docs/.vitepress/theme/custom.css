@@ -26,10 +26,6 @@
     var(--sanvex-purple) 75%,
     var(--sanvex-magenta) 100%
   );
-  -webkit-background-clip: text;
-  background-clip: text;
-
-  --vp-home-hero-image-filter: none;
 }
 
 .dark {
@@ -38,12 +34,6 @@
   --vp-c-brand-3: #c084fc;
   --vp-c-brand-soft: rgba(168, 85, 247, 0.18);
 
-  --vp-c-bg: #0c0a14;
-  --vp-c-bg-alt: #12101c;
-  --vp-c-bg-soft: #1a1728;
-  --vp-c-text-1: #f1f5f9;
-  --vp-c-text-2: #94a3b8;
-
   --vp-home-hero-name-background: linear-gradient(
     120deg,
     #60a5fa 0%,
@@ -51,6 +41,13 @@
     #c084fc 80%,
     #e879f9 100%
   );
+
+  --vp-c-bg: #0c0a14;
+  --vp-c-bg-alt: #12101c;
+  --vp-c-bg-soft: #1a1728;
+  --vp-c-text-1: #f1f5f9;
+  --vp-c-text-2: #94a3b8;
+
 }
 
 /* Navbar logo */
@@ -58,7 +55,7 @@
   height: 28px;
 }
 
-/* Brand buttons — subtle gradient */
+/* Brand buttons on home hero */
 .VPButton.brand {
   border: none;
   background: linear-gradient(
@@ -85,12 +82,3 @@
   color: var(--vp-c-brand-3);
 }
 
-/* Hero image on home */
-.VPHero .image-src {
-  max-width: 200px;
-  filter: drop-shadow(0 12px 32px rgba(59, 130, 246, 0.25));
-}
-
-.dark .VPHero .image-src {
-  filter: drop-shadow(0 12px 32px rgba(168, 85, 247, 0.3));
-}

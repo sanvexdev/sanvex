@@ -1,11 +1,11 @@
 # Sanvex
 
-> Laravel package for AI agents to integrate with GitHub, Gmail, Linear, Notion, Slack, and custom drivers.
+> Laravel integrations for AI agents with managed auth and support for GitHub, Gmail, Linear, Notion, Slack, and custom drivers.
 
-## Documentation
+## Canonical docs URLs
 
-- [Welcome](https://sanvex.narayan-dhakal.com.np/)
-- [Quickstart](https://sanvex.narayan-dhakal.com.np/getting-started/quickstart)
-- [Installation](https://sanvex.narayan-dhakal.com.np/getting-started/installation)
-- [Usage](https://sanvex.narayan-dhakal.com.np/getting-started/usage)
-- [Introduction](https://sanvex.narayan-dhakal.com.np/introduction)
+- https://sanvex.narayan-dhakal.com.np/docs/getting-started/quickstart
+- https://sanvex.narayan-dhakal.com.np/docs/getting-started/installation
+- https://sanvex.narayan-dhakal.com.np/docs/getting-started/usage
+- https://sanvex.narayan-dhakal.com.np/docs/introduction
+

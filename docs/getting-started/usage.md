@@ -1,3 +1,7 @@
+---
+title: Usage
+---
+
 # Usage
 
 Resolve a driver and call a resource action:
