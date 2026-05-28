@@ -1,0 +1,108 @@
+# Sanvex
+
+> Laravel integrations for AI agents with managed auth and support for GitHub, Gmail, Linear, Notion, Slack, and custom drivers.
+
+## Canonical docs URLs
+
+Entry point (no marketing home page — docs start here):
+
+- https://sanvex.narayan-dhakal.com.np/docs/getting-started/quickstart
+- https://sanvex.narayan-dhakal.com.np/docs/introduction
+- https://sanvex.narayan-dhakal.com.np/docs/getting-started/installation
+- https://sanvex.narayan-dhakal.com.np/docs/getting-started/usage
+- https://sanvex.narayan-dhakal.com.np/docs/concepts/packages
+- https://sanvex.narayan-dhakal.com.np/docs/concepts/database
+- https://sanvex.narayan-dhakal.com.np/docs/concepts/authentication
+- https://sanvex.narayan-dhakal.com.np/docs/concepts/tenancy
+- https://sanvex.narayan-dhakal.com.np/docs/integrations/laravel-ai
+- https://sanvex.narayan-dhakal.com.np/docs/integrations/mcp
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/github
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/gmail
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/slack
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/notion
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/linear
+
+## What is Sanvex
+
+Sanvex is a Laravel integration layer. Resolve a driver by id, then call resource actions:
+
+SanvexManager → resolveDriver('github') → repositories()->list([...])
+
+Packages: sanvex/core (manager, encryption, DB), sanvex/cli (artisan commands), sanvex/mcp (MCP server), sanvex/laravel-ai (Laravel AI tools), sanvex/{driver} (per service).
+
+Requires PHP 8.2+ and Laravel 12 or 13.
+
+## Quickstart
+
+```bash
+composer require sanvex/core sanvex/cli sanvex/github
+php artisan migrate
+php artisan sanvex:setup github --api-key="ghp_..."
+```
+
+```php
+use Sanvex\Core\SanvexManager;
+
+$manager->resolveDriver('github')->repositories()->list(['per_page' => 10]);
+```
+
+## Database tables
+
+- sv_accounts: encrypted credentials (owner_type, owner_id, driver, key_name)
+- sv_entities: cached entities (driver, entity_type, entity_id, data)
+- sv_events: webhook/event log
+- sv_permissions: approval records for guarded actions
+- sv_integrations: migration exists; not used by runtime code yet
+
+Encryption: SANVEX_KEK env (or APP_KEY fallback). Generate with: php artisan sanvex:keygen
+
+## Authentication
+
+CLI: php artisan sanvex:setup {driver} --api-key= --bot-token= --owner-type= --owner-id=
+
+Token resolution order: api_key → bot_token → access_token
+
+Driver auth types:
+- github: api_key, oauth2 (default api_key)
+- gmail: oauth2 only
+- linear: api_key, oauth2
+- notion: api_key, oauth_2 — OAuth routes at /sanvex/notion/login
+- slack: api_key, oauth2 — use --bot-token for bot tokens
+
+Only Notion has built-in OAuth web routes in this repo.
+
+## Tenancy
+
+$manager->for($owner)->resolveDriver('notion')->pages()->list([...]);
+
+Global default: owner_type=global, owner_id=default.
+
+## Laravel AI
+
+composer require sanvex/laravel-ai
+
+Single tool: app(SanvexAi::class)->tool()
+Per-operation tools: app(SanvexAi::class)->driver('github')->tools()
+
+System introspection: {"driver":"system","resource":"drivers","action":"list.configured","args":{}}
+
+## MCP
+
+composer require sanvex/mcp
+php artisan sanvex:mcp-stdio
+
+Optional HTTP: SANVEX_MCP_ENABLE_SERVER=true → GET /sanvex/mcp/sse, POST /sanvex/mcp/message
+
+Tools: sanvex_list_operations, sanvex_setup, sanvex_get_schema. RunScriptTool disabled by default.
+
+## Driver setup examples
+
+```bash
+php artisan sanvex:setup github --api-key="ghp_..."
+php artisan sanvex:setup slack --bot-token="xoxb-..."
+php artisan sanvex:setup notion --api-key="secret_..."
+php artisan sanvex:setup linear --api-key="lin_api_..."
+```
+
+Notion OAuth env: NOTION_CLIENT_ID, NOTION_CLIENT_SECRET, NOTION_REDIRECT_URI, NOTION_AUTH_TYPE=oauth_2

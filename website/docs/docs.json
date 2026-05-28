@@ -1,0 +1,96 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Sanvex",
+  "theme": "mint",
+  "colors": {
+    "primary": "#6366f1",
+    "light": "#818cf8",
+    "dark": "#4f46e5"
+  },
+  "logo": {
+    "light": "/public/logo.png",
+    "dark": "/public/logo.png",
+    "href": "https://github.com/sanvexdev/sanvex"
+  },
+  "favicon": "/public/logo.png",
+  "appearance": {
+    "default": "dark"
+  },
+  "background": {
+    "decoration": "gradient"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/sanvexdev/sanvex"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Quickstart",
+      "href": "/getting-started/quickstart"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "index",
+              "getting-started/quickstart",
+              "getting-started/installation",
+              "getting-started/usage"
+            ]
+          },
+          {
+            "group": "Concepts",
+            "pages": [
+              "introduction",
+              "concepts/packages",
+              "concepts/database",
+              "concepts/authentication",
+              "concepts/tenancy"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/laravel-ai",
+              "integrations/mcp"
+            ]
+          },
+          {
+            "group": "Drivers",
+            "pages": [
+              "drivers/index",
+              "drivers/github",
+              "drivers/gmail",
+              "drivers/linear",
+              "drivers/notion",
+              "drivers/slack"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "icon": "github",
+          "href": "https://github.com/sanvexdev/sanvex"
+        }
+      ]
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/sanvexdev/sanvex"
+    }
+  }
+}

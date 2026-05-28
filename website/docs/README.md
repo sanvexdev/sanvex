@@ -1,4 +1,4 @@
-# Sanvex documentation (Mintlify)
+# Sanvex documentation (VitePress)
 
 ## Local preview
 
@@ -10,7 +10,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:5173`.
 
 ## Build
 
@@ -20,7 +20,3 @@ npm run preview
 ```
 
 Output: `docs/.vitepress/dist/`
-
-## Location
-
-Mintlify documentation source now lives in `website/docs` (with `website/docs/docs.json`).

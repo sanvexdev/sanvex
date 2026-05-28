@@ -3,15 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vitepress dev docs",
-    "build": "vitepress build docs",
-    "preview": "vitepress preview docs"
-  },
-  "devDependencies": {
-    "vitepress": "^1.6.3",
-    "vue": "^3.5.13"
+    "dev": "cd website/docs && npx mint dev --no-open",
+    "build": "cd website/docs && npx mint validate",
+    "preview": "cd website/docs && npx mint dev"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "mintlify": "^4.2.584"
   }
 }
