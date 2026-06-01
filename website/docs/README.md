@@ -1,4 +1,4 @@
-# Sanvex documentation (VitePress)
+# Sanvex documentation (Mintlify)
 
 ## Local preview
 
@@ -10,13 +10,12 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`.
+Open the URL printed by the Mintlify dev server (typically `http://localhost:3000`).
 
 ## Build
 
 ```bash
 npm run build
-npm run preview
 ```
 
-Output: `docs/.vitepress/dist/`
+Validates the Mintlify configuration and content under `website/docs` (see `docs.json`).
