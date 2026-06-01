@@ -5,28 +5,19 @@ description: Install and configure Sanvex drivers — GitHub, Gmail, Linear, Not
 
 # Drivers
 
-Each driver is a Composer package with its own docs section in this tab. Install [Sanvex core and CLI](../getting-started/installation) first, then add the drivers you need.
-
-```bash
-composer require sanvex/github
-php artisan sanvex:setup github --api-key="ghp_..."
-```
+Each driver has its own section in this tab: **Overview**, **Setup**, and **Resources**. Install [Sanvex core and CLI](../getting-started/installation) first.
 
 ## Available drivers
 
-| Driver | Package | Auth | Docs |
-| ------ | ------- | ---- | ---- |
-| GitHub | `sanvex/github` | API key, OAuth2 | [GitHub](./github) |
-| Gmail | `sanvex/gmail` | OAuth2 | [Gmail](./gmail) |
-| Linear | `sanvex/linear` | API key, OAuth2 | [Linear](./linear) |
-| Notion | `sanvex/notion` | API key, OAuth2 | [Notion](./notion) |
-| Slack | `sanvex/slack` | API key, OAuth2 | [Slack](./slack) |
-
-Use the sidebar to open a driver. Larger drivers can add sub-pages under their group later (setup, resources, webhooks, and so on).
+| Driver | Package | Auth | Start here |
+| ------ | ------- | ---- | ---------- |
+| GitHub | `sanvex/github` | API key, OAuth2 | [Overview](./github/overview) |
+| Gmail | `sanvex/gmail` | OAuth2 | [Overview](./gmail/overview) |
+| Linear | `sanvex/linear` | API key, OAuth2 | [Overview](./linear/overview) |
+| Notion | `sanvex/notion` | API key, OAuth2 | [Overview](./notion/overview) |
+| Slack | `sanvex/slack` | API key, OAuth2 | [Overview](./slack/overview) |
 
 ## Setup command
-
-All drivers share the same CLI:
 
 ```bash
 php artisan sanvex:list

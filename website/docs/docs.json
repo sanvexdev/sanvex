@@ -75,33 +75,43 @@
           },
           {
             "group": "GitHub",
-            "icon": "github",
-            "root": "drivers/github",
-            "pages": ["drivers/github"]
+            "pages": [
+              "drivers/github/overview",
+              "drivers/github/setup",
+              "drivers/github/resources"
+            ]
           },
           {
             "group": "Gmail",
-            "icon": "envelope",
-            "root": "drivers/gmail",
-            "pages": ["drivers/gmail"]
+            "pages": [
+              "drivers/gmail/overview",
+              "drivers/gmail/setup",
+              "drivers/gmail/resources"
+            ]
           },
           {
             "group": "Linear",
-            "icon": "chart-line",
-            "root": "drivers/linear",
-            "pages": ["drivers/linear"]
+            "pages": [
+              "drivers/linear/overview",
+              "drivers/linear/setup",
+              "drivers/linear/resources"
+            ]
           },
           {
             "group": "Notion",
-            "icon": "book-open",
-            "root": "drivers/notion",
-            "pages": ["drivers/notion"]
+            "pages": [
+              "drivers/notion/overview",
+              "drivers/notion/setup",
+              "drivers/notion/resources"
+            ]
           },
           {
             "group": "Slack",
-            "icon": "slack",
-            "root": "drivers/slack",
-            "pages": ["drivers/slack"]
+            "pages": [
+              "drivers/slack/overview",
+              "drivers/slack/setup",
+              "drivers/slack/resources"
+            ]
           }
         ]
       }

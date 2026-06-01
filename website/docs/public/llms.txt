@@ -17,11 +17,12 @@ Entry point (no marketing home page — docs start here):
 - https://sanvex.narayan-dhakal.com.np/docs/integrations/laravel-ai
 - https://sanvex.narayan-dhakal.com.np/docs/integrations/mcp
 - https://sanvex.narayan-dhakal.com.np/docs/drivers/
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/github
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/gmail
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/slack
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/notion
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/linear
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/github/overview
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/github/setup
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/gmail/overview
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/slack/overview
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/notion/overview
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/linear/overview
 
 ## What is Sanvex
 
