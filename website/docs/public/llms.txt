@@ -84,8 +84,10 @@ composer require sanvex/laravel-ai
 
 Single tool: app(SanvexAi::class)->tool()
 Per-operation tools: app(SanvexAi::class)->driver('github')->tools()
+Filters: only(), except(), readOnly() on SanvexToolSet
 
-System introspection: {"driver":"system","resource":"drivers","action":"list.configured","args":{}}
+System introspection actions: list, list.active, list.configured on system/drivers
+Example: {"driver":"system","resource":"drivers","action":"list.configured","args":{}}
 
 ## MCP
 
