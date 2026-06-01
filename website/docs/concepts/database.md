@@ -4,16 +4,10 @@ title: Database
 
 # Database
 
-Sanvex core ships five migrations that create `sv_*` tables. Run them with:
+Sanvex core ships five migrations that create `sv_*` tables. With `sanvex/core` installed, run:
 
 ```bash
 php artisan migrate
-```
-
-Or via the CLI helper:
-
-```bash
-php artisan sanvex:migrate
 ```
 
 ## Tables

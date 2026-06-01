@@ -41,7 +41,10 @@
           {
             "group": "Getting Started",
             "pages": [
-              "index",
+              {
+                "page": "index",
+                "title": "Introduction"
+              },
               "getting-started/quickstart",
               "getting-started/installation",
               "getting-started/usage"
@@ -50,7 +53,6 @@
           {
             "group": "Concepts",
             "pages": [
-              "introduction",
               "concepts/packages",
               "concepts/database",
               "concepts/authentication",

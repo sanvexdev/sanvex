@@ -10,9 +10,10 @@ title: Gmail
 
 ## Install
 
+Requires `sanvex/core`, `sanvex/cli`, and `php artisan migrate` first ([Installation](../getting-started/installation)).
+
 ```bash
 composer require sanvex/gmail
-php artisan migrate
 ```
 
 ## Setup

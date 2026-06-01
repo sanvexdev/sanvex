@@ -4,7 +4,7 @@ title: Laravel AI
 
 # Laravel AI integration
 
-The `sanvex/laravel-ai` package connects Sanvex drivers to [Laravel AI](https://laravel.com/docs/ai) agents as callable tools.
+Use `sanvex/laravel-ai` to give [Laravel AI](https://laravel.com/docs/ai) agents access to Sanvex drivers (GitHub, Gmail, Slack, and others) as tools.
 
 ## Install
 
@@ -14,88 +14,220 @@ composer require sanvex/laravel-ai
 
 Requires `sanvex/core`, `laravel/ai` ^0.6.0, and Laravel 12 or 13.
 
-The service provider registers `SanvexAi` as a singleton (alias: `sanvex.ai`).
+Configure at least one driver first (see [Quickstart](../getting-started/quickstart)). The package registers `SanvexAi` automatically as `app(SanvexAi::class)` or `app('sanvex.ai')`.
 
-## Two integration modes
+## Add tools to an agent
 
-### 1. Single action tool
-
-One tool that accepts `{ driver, resource, action, args }` and executes any exposed operation:
+Implement `HasTools` and return Sanvex tools from `tools()`:
 
 ```php
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Promptable;
 use Sanvex\LaravelAi\Ai\SanvexAi;
 
+class MyAgent implements Agent, HasTools
+{
+    use Promptable;
+
+    public function instructions(): string
+    {
+        return 'You help the user with their GitHub repositories.';
+    }
+
+    public function tools(): iterable
+    {
+        return app(SanvexAi::class)->driver('github')->tools();
+    }
+}
+```
+
+The agent receives one tool per operation (for example `Sanvex_Github_Repositories_List`) with parameters the model can fill in directly.
+
+Inject `SanvexAi` in a controller or action instead of `app()` if you prefer:
+
+```php
 public function agent(SanvexAi $sanvex)
 {
-    return SomeAgent::make()
-        ->tools([$sanvex->tool()])
-        ->prompt('List my GitHub repositories');
+    return MyAgent::make()
+        ->tools($sanvex->driver('github')->tools())
+        ->prompt('List my open pull requests');
 }
 ```
 
-Restrict to specific drivers:
+## Choose an approach
+
+| | Per-operation tools | Generic router |
+|---|---------------------|----------------|
+| **How** | `$sanvex->driver('github')->tools()` | `$sanvex->tool()` |
+| **When** | Default for most agents | Exploration, many drivers, or legacy resources without rich schemas |
+| **Model experience** | Sees each operation and its parameters | One tool; may call `system` / `drivers` / `list` first to discover actions |
+
+**Recommendation:** start with per-operation tools for the drivers you need. Add the router only when you have a clear reason.
+
+## Per-operation tools
+
+### One driver
 
 ```php
-$sanvex->tool(['github', 'slack']);
+return app(SanvexAi::class)->driver('github')->tools();
 ```
 
-The tool always allows `driver: "system"` for introspection.
-
-List configured drivers:
-
-```json
-{
-  "driver": "system",
-  "resource": "drivers",
-  "action": "list.configured",
-  "args": {}
-}
-```
-
-### 2. Per-operation tools
-
-Generate one Laravel AI tool per driver resource action:
+### Several drivers
 
 ```php
-$sanvex->driver('github')->tools();
-// or multiple drivers:
-$sanvex->drivers(['github', 'slack'])->tools();
+return app(SanvexAi::class)->drivers(['github', 'slack', 'notion'])->tools();
 ```
 
-Filter tools:
+### Read-only agents
+
+Safe default for support or reporting bots:
 
 ```php
-$sanvex->driver('github')
-    ->readOnly()
-    ->except(['repositories.delete'])
+return app(SanvexAi::class)->driver('github')->readOnly()->tools();
+```
+
+### Allow only specific actions
+
+```php
+return app(SanvexAi::class)
+    ->drivers(['github', 'slack'])
+    ->only([
+        'github.repositories.list',
+        'github.issues.create',
+        'slack.messages.post',
+    ])
     ->tools();
 ```
 
-## How execution works
-
-`SanvexActionExecutor`:
-
-1. Resolves the driver via `SanvexManager::resolveDriver()` (global scope)
-2. Checks `isConfigured()` — returns a setup hint if not
-3. Calls `$driver->{$resource}()->{$action}($args)`
-4. Discovers actions via `#[Operation]` attributes when present, otherwise all public methods
-
-Large list results are truncated to 5 items with a note.
-
-## Metadata
-
-Inspect available drivers and actions without executing:
+### Block dangerous actions
 
 ```php
-$metadata = app(SanvexAi::class)->metadata();
-// or filter:
-$metadata = app(SanvexAi::class)->metadata(['github']);
+return app(SanvexAi::class)
+    ->drivers(['github', 'gmail'])
+    ->except(['github.repositories.delete', 'gmail.messages.delete'])
+    ->tools();
 ```
 
-Returns driver id, `configured` status, resource names, and action lists.
+### Exclude a whole resource
 
-## Tenancy note
+```php
+return app(SanvexAi::class)->driver('github')->except(['repositories'])->tools();
+```
 
-The bundled executor uses global `resolveDriver()`. For per-user credentials, resolve the manager with `for($owner)` in your own agent logic or wrap tool execution in a tenant context.
+### Combine filters
+
+`only()` and `except()` stack; `readOnly()` applies last.
+
+```php
+return app(SanvexAi::class)
+    ->drivers(['github', 'gmail'])
+    ->readOnly()
+    ->except(['gmail.threads.list'])
+    ->tools();
+```
+
+## Filter patterns (multi-driver)
+
+With **one driver**, short names are enough: `repositories.delete`, `issues.list`.
+
+With **several drivers**, prefix by driver when resource names overlap (for example `repositories` on GitHub and Bitbucket):
+
+| Pattern | Effect |
+|---------|--------|
+| `repositories.delete` | Delete on **every** driver in the set that has `repositories` |
+| `github.repositories.delete` | Delete only on GitHub |
+| `bitbucket.repositories` | All repository tools on Bitbucket only |
+
+```php
+// Wrong: removes delete on both GitHub and Bitbucket
+->except(['repositories.delete'])
+
+// Right: only Bitbucket
+->except(['bitbucket.repositories.delete'])
+```
+
+## Generic router tool
+
+A single tool accepts JSON: `driver`, `resource`, `action`, `args`.
+
+```php
+return [app(SanvexAi::class)->tool()];
+```
+
+Limit which drivers the model may use:
+
+```php
+return [app(SanvexAi::class)->tool(['github', 'slack'])];
+```
+
+`driver: "system"` is always allowed so the model can discover what exists.
+
+**Discover drivers** (all registered):
+
+```json
+{ "driver": "system", "resource": "drivers", "action": "list", "args": {} }
+```
+
+**Configured drivers only:**
+
+```json
+{ "driver": "system", "resource": "drivers", "action": "list.configured", "args": {} }
+```
+
+**Call an operation** (example):
+
+```json
+{
+  "driver": "github",
+  "resource": "repositories",
+  "action": "list",
+  "args": { "per_page": 10 }
+}
+```
+
+Use `args: {}` when an action takes no parameters.
+
+## Mix both approaches
+
+Common pattern: typed GitHub tools plus a router for less-used integrations.
+
+```php
+return [
+    ...app(SanvexAi::class)->driver('github')->readOnly()->tools(),
+    app(SanvexAi::class)->tool(['notion', 'linear']),
+];
+```
+
+## Inspect drivers without calling the API
+
+Useful when building prompts or debugging agent setup:
+
+```php
+$meta = app(SanvexAi::class)->metadata();
+$meta = app(SanvexAi::class)->metadata(['github', 'slack']);
+```
+
+Each entry includes whether the driver is configured and which resources/actions are available.
+
+## Multi-tenant apps
+
+Out of the box, tools resolve credentials for the **global** Sanvex scope. For per-user accounts, resolve drivers with your tenant context before the agent runs, or wrap tool execution so `SanvexManager::for($owner)` applies for that request.
 
 See [Tenancy](../concepts/tenancy).
+
+## Troubleshooting
+
+| Issue | What to do |
+|-------|------------|
+| Model says driver is not configured | Run `php artisan sanvex:setup {driver}` for that service |
+| Too many tools / high token use | Narrow with `only()`, one driver, or the router |
+| Model picks wrong GitHub repo action | Prefer per-operation tools over the router |
+| Huge list responses | Long lists are truncated automatically in tool output |
+| Custom Sanvex driver, weak tool args | Add `#[Operation]` on resource methods so the model gets typed parameters |
+
+## Related
+
+- [Usage](../getting-started/usage) — call drivers directly in PHP
+- [MCP](./mcp) — expose Sanvex to Cursor, Claude Desktop, and other MCP clients
+- [Packages](../concepts/packages) — which Composer packages to install

@@ -4,23 +4,18 @@ title: Installation
 
 # Installation
 
-Set up Sanvex in a fresh or existing Laravel application.
+PHP 8.2+, Laravel 12 or 13, and Composer.
 
-## Prerequisites
-
-- PHP 8.2+
-- Laravel 12 or 13
-- Composer
-
-## Install core and CLI
+## 1. Install Sanvex
 
 ```bash
 composer require sanvex/core sanvex/cli
+php artisan migrate
 ```
 
-## Install drivers
+`php artisan migrate` creates the `sv_*` tables (and your normal Laravel tables on a new app). You do not need a separate Sanvex migrate command.
 
-Add one package per external service you need:
+## 2. Add drivers
 
 ```bash
 composer require sanvex/github
@@ -30,100 +25,72 @@ composer require sanvex/github
 # composer require sanvex/slack
 ```
 
-Optional agent packages:
-
-```bash
-composer require sanvex/mcp          # MCP server
-composer require sanvex/laravel-ai   # Laravel AI SDK tools
-```
-
-## Database
-
-Sanvex core auto-loads its migrations. Run them with your app:
-
-```bash
-php artisan migrate
-```
-
-Or use the Sanvex-specific command:
-
-```bash
-php artisan sanvex:migrate
-```
-
-This creates `sv_accounts`, `sv_entities`, `sv_events`, `sv_permissions`, and `sv_integrations` tables. See [Database](../concepts/database).
-
-## Configuration
-
-Publish config (optional — package defaults work out of the box):
-
-```bash
-php artisan vendor:publish --tag=sanvex-config
-```
-
-Key settings in `config/sanvex.php`:
-
-| Setting | Env var | Default |
-| ------- | ------- | ------- |
-| Encryption key | `SANVEX_KEK` | Falls back to `APP_KEY` |
-| MCP server | `SANVEX_MCP_ENABLE_SERVER` | `false` |
-| MCP run script | `SANVEX_MCP_ALLOW_RUN_SCRIPT` | `false` |
-| Approval URL | `SANVEX_APPROVAL_URL` | `/sanvex/approve` |
-
-Generate a dedicated encryption key:
-
-```bash
-php artisan sanvex:keygen
-```
-
-Add the output to `.env`:
-
-```
-SANVEX_KEK=base64:...
-```
-
-## Register custom drivers
-
-Add driver classes to the `drivers` array in `config/sanvex.php`:
-
-```php
-'drivers' => [
-    \App\Sanvex\AcmeDriver::class,
-],
-```
-
-## Store credentials
-
-List installed drivers:
+Confirm the driver is registered:
 
 ```bash
 php artisan sanvex:list
 ```
 
-Set up a driver (global scope):
+## 3. Store credentials
 
 ```bash
 php artisan sanvex:setup github --api-key="ghp_..."
 ```
 
-Tenant-scoped credentials:
+Per-team or per-user keys:
 
 ```bash
 php artisan sanvex:setup notion --api-key="secret_..." \
   --owner-type=App\\Models\\Team --owner-id=1
 ```
 
-See [Authentication](../concepts/authentication) for OAuth and token details per driver.
+More per driver: [Drivers](../drivers/) and [Authentication](../concepts/authentication).
 
-## Verify
+## 4. Verify
 
 ```php
 use Sanvex\Core\SanvexManager;
 
 $driver = app(SanvexManager::class)->resolveDriver('github');
-$configured = $driver->isConfigured(); // true after setup
+
+$driver->isConfigured(); // true after sanvex:setup
 ```
+
+Or from the shell:
+
+```bash
+php artisan tinker --execute="dump(app(\Sanvex\Core\SanvexManager::class)->resolveDriver('github')->isConfigured());"
+```
+
+## Agent packages (optional)
+
+```bash
+composer require sanvex/laravel-ai
+composer require sanvex/mcp
+```
+
+[Laravel AI](../integrations/laravel-ai) · [MCP](../integrations/mcp)
+
+## Configuration (optional)
+
+Skip publishing if defaults are enough. To customize drivers or encryption:
+
+```bash
+php artisan vendor:publish --tag=sanvex-config
+```
+
+Dedicated encryption key (optional):
+
+```bash
+php artisan sanvex:keygen
+```
+
+Copy the printed line into `.env` as `SANVEX_KEK=...`. If omitted, Sanvex uses `APP_KEY`.
+
+Add custom driver classes under `drivers` in `config/sanvex.php`.
+
+[Database](../concepts/database) · [Packages](../concepts/packages)
 
 ## Next step
 
-Continue with [Usage](./usage).
+[Usage](./usage)

@@ -35,7 +35,6 @@ composer require sanvex/cli
 | ------- | ------- |
 | `sanvex:list` | List registered drivers and auth metadata |
 | `sanvex:setup {driver}` | Store credentials (`--api-key`, `--bot-token`, owner options) |
-| `sanvex:migrate` | Run Sanvex migrations from vendor path |
 | `sanvex:keygen` | Print a `SANVEX_KEK=...` line for `.env` |
 | `sanvex:backfill {driver}` | Placeholder backfill hook (no driver logic yet) |
 | `sanvex:make-driver {name}` | Scaffold a new driver package |
@@ -91,7 +90,7 @@ Requires `laravel/ai` ^0.6.0. See [Laravel AI integration](../integrations/larav
 
 ## Typical install set
 
-Minimal (one driver, PHP only):
+Minimal (one driver):
 
 ```bash
 composer require sanvex/core sanvex/cli sanvex/github
