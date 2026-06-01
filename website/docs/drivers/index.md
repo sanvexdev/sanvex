@@ -1,45 +1,36 @@
 ---
 title: Drivers
+description: Install and configure Sanvex drivers — GitHub, Gmail, Linear, Notion, Slack, and custom integrations.
 ---
 
 # Drivers
 
-Each Sanvex driver is a separate Composer package. Install [Sanvex core and CLI](../getting-started/installation) first (`php artisan migrate`), then add driver packages and run `php artisan sanvex:setup`.
-
-## Driver matrix
-
-| Package | Driver id | Auth types | Default auth | OAuth routes in repo |
-| ------- | --------- | ---------- | ------------ | -------------------- |
-| `sanvex/github` | `github` | `api_key`, `oauth2` | `api_key` | No |
-| `sanvex/gmail` | `gmail` | `oauth2` | `oauth2` | No |
-| `sanvex/linear` | `linear` | `api_key`, `oauth2` | `api_key` | No |
-| `sanvex/notion` | `notion` | `api_key`, `oauth_2` | `api_key` | Yes |
-| `sanvex/slack` | `slack` | `api_key`, `oauth2` | `api_key` | No |
-
-Run `php artisan sanvex:list` after installing packages to confirm registration.
-
-## Setup commands
-
-All drivers use the same command:
+Each driver is a Composer package with its own docs section in this tab. Install [Sanvex core and CLI](../getting-started/installation) first, then add the drivers you need.
 
 ```bash
+composer require sanvex/github
+php artisan sanvex:setup github --api-key="ghp_..."
+```
+
+## Available drivers
+
+| Driver | Package | Auth | Docs |
+| ------ | ------- | ---- | ---- |
+| GitHub | `sanvex/github` | API key, OAuth2 | [GitHub](./github) |
+| Gmail | `sanvex/gmail` | OAuth2 | [Gmail](./gmail) |
+| Linear | `sanvex/linear` | API key, OAuth2 | [Linear](./linear) |
+| Notion | `sanvex/notion` | API key, OAuth2 | [Notion](./notion) |
+| Slack | `sanvex/slack` | API key, OAuth2 | [Slack](./slack) |
+
+Use the sidebar to open a driver. Larger drivers can add sub-pages under their group later (setup, resources, webhooks, and so on).
+
+## Setup command
+
+All drivers share the same CLI:
+
+```bash
+php artisan sanvex:list
 php artisan sanvex:setup {driver} [--api-key=] [--bot-token=] [--owner-type=] [--owner-id=]
 ```
 
-| Driver | Typical setup |
-| ------ | ------------- |
-| GitHub | `--api-key` (personal access token) |
-| Gmail | OAuth token via app code (no CLI OAuth flow) |
-| Linear | `--api-key` |
-| Notion | `--api-key` (integration token) or OAuth via `/sanvex/notion/login` |
-| Slack | `--bot-token` or `--api-key` |
-
-See [Authentication](../concepts/authentication) for details.
-
-## Driver pages
-
-- [GitHub](./github)
-- [Gmail](./gmail)
-- [Linear](./linear)
-- [Notion](./notion)
-- [Slack](./slack)
+See [Authentication](../concepts/authentication) for token types and tenancy.
