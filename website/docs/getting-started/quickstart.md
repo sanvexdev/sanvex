@@ -4,28 +4,27 @@ title: Quickstart
 
 # Quickstart
 
-Get from zero to a working GitHub integration in four steps.
+GitHub from Composer to a live API call.
 
-## 1. Install packages
+## 1. Install
 
 ```bash
 composer require sanvex/core sanvex/cli sanvex/github
-```
-
-## 2. Run migrations
-
-```bash
 php artisan migrate
+php artisan sanvex:list
 ```
 
-## 3. Store credentials
+You should see `github` in the table.
+
+## 2. Connect GitHub
+
+Create a [GitHub personal access token](https://github.com/settings/tokens), then:
 
 ```bash
-php artisan sanvex:list
-php artisan sanvex:setup github --api-key="ghp_..."
+php artisan sanvex:setup github --api-key="ghp_YOUR_TOKEN"
 ```
 
-## 4. Call the driver
+## 3. Call the API
 
 ```php
 use Sanvex\Core\SanvexManager;
@@ -38,8 +37,10 @@ public function repos(SanvexManager $manager)
 }
 ```
 
-## What's next
+Use a real token in step 2. A placeholder token stores successfully but GitHub returns `401 Bad credentials` on API calls.
 
-- [Installation](./installation) — config, KEK, multiple drivers
-- [Usage](./usage) — resources, tenancy, agent integration
-- [Drivers](../drivers/) — setup for GitHub, Slack, Notion, and others
+## Next
+
+- [Installation](./installation) — split install, more drivers, config
+- [Usage](./usage) — tenancy, webhooks, agents
+- [Drivers](../drivers/github) — GitHub resources and setup

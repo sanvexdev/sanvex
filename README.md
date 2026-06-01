@@ -13,43 +13,31 @@ AI agents hit GitHub, Gmail, Linear, Notion, Slack, or your own drivers through 
 | Package       | Role                                                         |
 | ------------- | ------------------------------------------------------------ |
 | `sanvex/core` | `SanvexManager`, encryption, DB tables, webhooks, tenancy    |
-| `sanvex/cli`  | Artisan: setup, migrate, list, scaffolding                   |
+| `sanvex/cli`  | Artisan: `sanvex:setup`, `sanvex:list`, `sanvex:keygen`, scaffolding |
 | `sanvex/mcp`  | MCP server (stdio + optional HTTP SSE) exposing Sanvex tools |
 
 
-Require `sanvex/cli` only if you want those commands; require `sanvex/mcp` only if an agent or IDE will speak MCP.
+Add `sanvex/mcp` or `sanvex/laravel-ai` when you expose Sanvex to agents.
 
 ---
 
 ## Install and setup
 
-1. **Composer** – require `sanvex/core` and `sanvex/cli`; add `sanvex/mcp` only if you use MCP; add each driver package you need.
-  ```bash
-   composer require sanvex/core sanvex/cli
-   # composer require sanvex/mcp
-   composer require sanvex/github
-   # composer require sanvex/gmail sanvex/linear sanvex/notion sanvex/slack
-  ```
-2. **Database** – run migrations (core loads its migrations with the app).
-  ```bash
-   php artisan migrate
-  ```
-3. **Config (optional)** – publish app `config/sanvex.php`, or rely on package defaults (`packages/core/config/sanvex.php`).
-  ```bash
-   php artisan vendor:publish --tag=sanvex-config
-  ```
-4. **Credentials** – list drivers, then store keys (global or per-owner).
-  ```bash
-   php artisan sanvex:list
-   php artisan sanvex:setup github --api-key="ghp_..."
-   php artisan sanvex:setup notion --api-key="secret_..." --owner-type=App\\Models\\Team --owner-id=1
-  ```
-5. **Custom drivers (optional)** – register classes in `config/sanvex.php`:
-  ```php
-   'drivers' => [
-       \App\Sanvex\AcmeDriver::class,
-   ],
-  ```
+```bash
+composer require sanvex/core sanvex/cli sanvex/github
+php artisan migrate
+php artisan sanvex:list
+php artisan sanvex:setup github --api-key="ghp_..."
+```
+
+Optional:
+
+```bash
+php artisan vendor:publish --tag=sanvex-config
+php artisan sanvex:keygen   # add SANVEX_KEK to .env
+```
+
+Custom drivers: register classes in `config/sanvex.php` under `drivers`.
 
 ---
 
@@ -139,10 +127,10 @@ Package: `sanvex/cli`. Commands register only when the app runs in console.
 | --------------------------- | ---------------------------------------------------------------------------- |
 | `sanvex:list`               | Registered drivers and auth metadata                                         |
 | `sanvex:setup {driver}`     | Store credentials (`--api-key`, `--bot-token`, `--owner-type`, `--owner-id`) |
-| `sanvex:migrate`            | Run migrations from `vendor/sanvex/core/src/Database/migrations`             |
 | `sanvex:keygen`             | Print a random `SANVEX_KEK=...` line for `.env`                              |
 | `sanvex:make-driver {name}` | Scaffold under `packages/drivers/{name}` in the consuming app                |
-| `sanvex:mcp-stdio`          | Start MCP stdio server (requires `sanvex/mcp`)                               |
+
+Migrations: use `php artisan migrate` after installing `sanvex/core`. MCP: `php artisan sanvex:mcp-stdio` (requires `sanvex/mcp`).
 
 
 ---

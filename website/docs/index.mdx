@@ -1,5 +1,75 @@
-# Sanvex
+---
+title: Sanvex
+description: Laravel integrations for AI agents — one API for GitHub, Gmail, Slack, Notion, Linear, and custom drivers.
+---
 
-Laravel integrations for AI agents.
+Sanvex is a Laravel integration layer for external services. Resolve a driver by id, call resource actions through one API, and optionally expose the same surface to AI agents via Laravel AI tools or MCP.
 
-Start with the [Quickstart](./getting-started/quickstart).
+```text
+SanvexManager → resolveDriver('github') → repositories()->list([...])
+```
+
+## What you get
+
+- **Drivers** — install a Composer package; the driver registers automatically
+- **Encrypted credentials** — tokens in `sv_accounts`, scoped per owner
+- **Resource actions** — consistent `repositories`, `messages`, `pages`, and similar APIs per service
+- **Agent tooling** — optional [Laravel AI](./integrations/laravel-ai) tools and [MCP](./integrations/mcp) server over the same operations
+
+Requires PHP 8.2+ and Laravel 12 or 13.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
+    Install a driver and make your first API call in minutes.
+  </Card>
+  <Card title="Installation" icon="download" href="/getting-started/installation">
+    Full Laravel setup, encryption key, and multiple drivers.
+  </Card>
+  <Card title="Laravel AI" icon="sparkles" href="/integrations/laravel-ai">
+    Register Sanvex tools on Laravel AI agents.
+  </Card>
+  <Card title="MCP" icon="plug" href="/integrations/mcp">
+    Expose Sanvex to Cursor, Claude Desktop, and other MCP clients.
+  </Card>
+</CardGroup>
+
+## Supported drivers
+
+| Package | Driver id | Auth |
+| ------- | --------- | ---- |
+| `sanvex/github` | `github` | API key, OAuth2 |
+| `sanvex/gmail` | `gmail` | OAuth2 |
+| `sanvex/linear` | `linear` | API key, OAuth2 |
+| `sanvex/notion` | `notion` | API key, OAuth2 |
+| `sanvex/slack` | `slack` | API key, OAuth2 |
+
+Custom drivers can be registered in `config/sanvex.php`. Per-driver setup lives under [Drivers](./drivers/).
+
+## Packages
+
+| Package | Role |
+| ------- | ---- |
+| `sanvex/core` | Manager, encryption, migrations, webhooks, tenancy |
+| `sanvex/cli` | Artisan setup and scaffolding |
+| `sanvex/mcp` | MCP stdio + optional HTTP SSE |
+| `sanvex/laravel-ai` | Laravel AI SDK tools |
+| `sanvex/{driver}` | One package per external service |
+
+Details: [Packages](./concepts/packages).
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Usage" icon="book-open" href="/getting-started/usage">
+    Resources, webhooks, and calling drivers from your app.
+  </Card>
+  <Card title="Authentication" icon="key" href="/concepts/authentication">
+    API keys, OAuth, and credential storage.
+  </Card>
+  <Card title="Tenancy" icon="users" href="/concepts/tenancy">
+    Per-user credentials with `for($owner)`.
+  </Card>
+  <Card title="Database" icon="database" href="/concepts/database">
+    `sv_*` tables and encryption.
+  </Card>
+</CardGroup>

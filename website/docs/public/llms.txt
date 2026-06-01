@@ -6,8 +6,8 @@
 
 Entry point (no marketing home page — docs start here):
 
+- https://sanvex.narayan-dhakal.com.np/docs
 - https://sanvex.narayan-dhakal.com.np/docs/getting-started/quickstart
-- https://sanvex.narayan-dhakal.com.np/docs/introduction
 - https://sanvex.narayan-dhakal.com.np/docs/getting-started/installation
 - https://sanvex.narayan-dhakal.com.np/docs/getting-started/usage
 - https://sanvex.narayan-dhakal.com.np/docs/concepts/packages
@@ -29,7 +29,7 @@ Sanvex is a Laravel integration layer. Resolve a driver by id, then call resourc
 
 SanvexManager → resolveDriver('github') → repositories()->list([...])
 
-Packages: sanvex/core (manager, encryption, DB), sanvex/cli (artisan commands), sanvex/mcp (MCP server), sanvex/laravel-ai (Laravel AI tools), sanvex/{driver} (per service).
+Packages: sanvex/core (manager, encryption, DB), sanvex/cli (sanvex:setup, sanvex:list), sanvex/mcp (MCP server), sanvex/laravel-ai (Laravel AI tools), sanvex/{driver} (per service).
 
 Requires PHP 8.2+ and Laravel 12 or 13.
 
@@ -38,8 +38,13 @@ Requires PHP 8.2+ and Laravel 12 or 13.
 ```bash
 composer require sanvex/core sanvex/cli sanvex/github
 php artisan migrate
+php artisan sanvex:list
 php artisan sanvex:setup github --api-key="ghp_..."
 ```
+
+Migrations: php artisan migrate (sanvex/core). Not sanvex:migrate. Setup/list require sanvex/cli.
+
+Optional: php artisan vendor:publish --tag=sanvex-config ; php artisan sanvex:keygen for SANVEX_KEK in .env
 
 ```php
 use Sanvex\Core\SanvexManager;

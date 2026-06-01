@@ -10,9 +10,10 @@ title: Linear
 
 ## Install
 
+Requires `sanvex/core`, `sanvex/cli`, and `php artisan migrate` first ([Installation](../getting-started/installation)).
+
 ```bash
 composer require sanvex/linear
-php artisan migrate
 ```
 
 ## Setup

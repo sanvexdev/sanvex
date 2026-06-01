@@ -10,9 +10,10 @@ title: GitHub
 
 ## Install
 
+Requires `sanvex/core`, `sanvex/cli`, and `php artisan migrate` first (see [Installation](../getting-started/installation)).
+
 ```bash
 composer require sanvex/github
-php artisan migrate
 ```
 
 ## Setup

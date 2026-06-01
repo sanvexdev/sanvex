@@ -4,7 +4,7 @@ title: Drivers
 
 # Drivers
 
-Each Sanvex driver is a separate Composer package. Install the package, run `sanvex:setup`, then call resources from PHP or expose them to agents.
+Each Sanvex driver is a separate Composer package. Install [Sanvex core and CLI](../getting-started/installation) first (`php artisan migrate`), then add driver packages and run `php artisan sanvex:setup`.
 
 ## Driver matrix
 
@@ -20,7 +20,7 @@ Run `php artisan sanvex:list` after installing packages to confirm registration.
 
 ## Setup commands
 
-All drivers use the same CLI:
+All drivers use the same command:
 
 ```bash
 php artisan sanvex:setup {driver} [--api-key=] [--bot-token=] [--owner-type=] [--owner-id=]

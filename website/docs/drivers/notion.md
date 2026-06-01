@@ -12,9 +12,10 @@ Note: Notion uses `oauth_2` (underscore) in driver code, not `oauth2`.
 
 ## Install
 
+Requires `sanvex/core`, `sanvex/cli`, and `php artisan migrate` first ([Installation](../getting-started/installation)).
+
 ```bash
 composer require sanvex/notion
-php artisan migrate
 ```
 
 ## Setup
