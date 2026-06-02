@@ -43,4 +43,4 @@ Use a real token in step 2. A placeholder token stores successfully but GitHub r
 
 - [Installation](./installation) — split install, more drivers, config
 - [Usage](./usage) — tenancy, webhooks, agents
-- [Drivers](../drivers/github) — GitHub resources and setup
+- [Drivers](../drivers/github/setup) — GitHub resources and setup

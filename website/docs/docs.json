@@ -41,10 +41,7 @@
           {
             "group": "Getting Started",
             "pages": [
-              {
-                "page": "index",
-                "title": "Introduction"
-              },
+              "index",
               "getting-started/quickstart",
               "getting-started/installation",
               "getting-started/usage"
@@ -65,16 +62,55 @@
               "integrations/laravel-ai",
               "integrations/mcp"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Drivers",
+        "icon": "plug",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["drivers/index"]
           },
           {
-            "group": "Drivers",
+            "group": "GitHub",
             "pages": [
-              "drivers/index",
-              "drivers/github",
-              "drivers/gmail",
-              "drivers/linear",
-              "drivers/notion",
-              "drivers/slack"
+              "drivers/github/overview",
+              "drivers/github/setup",
+              "drivers/github/resources"
+            ]
+          },
+          {
+            "group": "Gmail",
+            "pages": [
+              "drivers/gmail/overview",
+              "drivers/gmail/setup",
+              "drivers/gmail/resources"
+            ]
+          },
+          {
+            "group": "Linear",
+            "pages": [
+              "drivers/linear/overview",
+              "drivers/linear/setup",
+              "drivers/linear/resources"
+            ]
+          },
+          {
+            "group": "Notion",
+            "pages": [
+              "drivers/notion/overview",
+              "drivers/notion/setup",
+              "drivers/notion/resources"
+            ]
+          },
+          {
+            "group": "Slack",
+            "pages": [
+              "drivers/slack/overview",
+              "drivers/slack/setup",
+              "drivers/slack/resources"
             ]
           }
         ]

@@ -1,45 +1,27 @@
 ---
 title: Drivers
+description: Install and configure Sanvex drivers — GitHub, Gmail, Linear, Notion, Slack, and custom integrations.
 ---
 
 # Drivers
 
-Each Sanvex driver is a separate Composer package. Install [Sanvex core and CLI](../getting-started/installation) first (`php artisan migrate`), then add driver packages and run `php artisan sanvex:setup`.
+Each driver has its own section in this tab: **Overview**, **Setup**, and **Resources**. Install [Sanvex core and CLI](../getting-started/installation) first.
 
-## Driver matrix
+## Available drivers
 
-| Package | Driver id | Auth types | Default auth | OAuth routes in repo |
-| ------- | --------- | ---------- | ------------ | -------------------- |
-| `sanvex/github` | `github` | `api_key`, `oauth2` | `api_key` | No |
-| `sanvex/gmail` | `gmail` | `oauth2` | `oauth2` | No |
-| `sanvex/linear` | `linear` | `api_key`, `oauth2` | `api_key` | No |
-| `sanvex/notion` | `notion` | `api_key`, `oauth_2` | `api_key` | Yes |
-| `sanvex/slack` | `slack` | `api_key`, `oauth2` | `api_key` | No |
+| Driver | Package | Auth | Start here |
+| ------ | ------- | ---- | ---------- |
+| GitHub | `sanvex/github` | API key, OAuth2 | [Overview](./github/overview) |
+| Gmail | `sanvex/gmail` | OAuth2 | [Overview](./gmail/overview) |
+| Linear | `sanvex/linear` | API key, OAuth2 | [Overview](./linear/overview) |
+| Notion | `sanvex/notion` | API key, OAuth2 | [Overview](./notion/overview) |
+| Slack | `sanvex/slack` | API key, OAuth2 | [Overview](./slack/overview) |
 
-Run `php artisan sanvex:list` after installing packages to confirm registration.
-
-## Setup commands
-
-All drivers use the same command:
+## Setup command
 
 ```bash
+php artisan sanvex:list
 php artisan sanvex:setup {driver} [--api-key=] [--bot-token=] [--owner-type=] [--owner-id=]
 ```
 
-| Driver | Typical setup |
-| ------ | ------------- |
-| GitHub | `--api-key` (personal access token) |
-| Gmail | OAuth token via app code (no CLI OAuth flow) |
-| Linear | `--api-key` |
-| Notion | `--api-key` (integration token) or OAuth via `/sanvex/notion/login` |
-| Slack | `--bot-token` or `--api-key` |
-
-See [Authentication](../concepts/authentication) for details.
-
-## Driver pages
-
-- [GitHub](./github)
-- [Gmail](./gmail)
-- [Linear](./linear)
-- [Notion](./notion)
-- [Slack](./slack)
+See [Authentication](../concepts/authentication) for token types and tenancy.
