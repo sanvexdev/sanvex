@@ -12,17 +12,18 @@ Entry point (no marketing home page — docs start here):
 - https://sanvex.narayan-dhakal.com.np/docs/getting-started/usage
 - https://sanvex.narayan-dhakal.com.np/docs/concepts/packages
 - https://sanvex.narayan-dhakal.com.np/docs/concepts/database
+- https://sanvex.narayan-dhakal.com.np/docs/concepts/configuration
 - https://sanvex.narayan-dhakal.com.np/docs/concepts/authentication
 - https://sanvex.narayan-dhakal.com.np/docs/concepts/tenancy
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/gmail/setup
 - https://sanvex.narayan-dhakal.com.np/docs/integrations/laravel-ai
 - https://sanvex.narayan-dhakal.com.np/docs/integrations/mcp
 - https://sanvex.narayan-dhakal.com.np/docs/drivers/
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/github/overview
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/github/setup
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/gmail/overview
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/slack/overview
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/notion/overview
-- https://sanvex.narayan-dhakal.com.np/docs/drivers/linear/overview
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/github/configuration
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/gmail/configuration
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/notion/configuration
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/slack/configuration
+- https://sanvex.narayan-dhakal.com.np/docs/drivers/linear/configuration
 
 ## What is Sanvex
 
@@ -74,9 +75,12 @@ Driver auth types:
 - gmail: oauth2 only
 - linear: api_key, oauth2
 - notion: api_key, oauth_2 — OAuth routes at /sanvex/notion/login
+- gmail: oauth2 only — OAuth routes at /sanvex/gmail/login when GMAIL_CLIENT_ID set
 - slack: api_key, oauth2 — use --bot-token for bot tokens
 
-Only Notion has built-in OAuth web routes in this repo.
+Per-driver env/config guides: docs/drivers/{driver}/configuration (github, gmail, notion, slack, linear). Core SANVEX_* : docs/concepts/configuration.
+
+Notion and Gmail read driver_configs and ship OAuth routes when client ID is set. Provider-specific token HTTP (per official docs): Gmail = form-urlencoded + client in body; Notion = JSON body + HTTP Basic + authorize owner=user. See docs/concepts/oauth.md.
 
 ## Tenancy
 
@@ -114,3 +118,4 @@ php artisan sanvex:setup linear --api-key="lin_api_..."
 ```
 
 Notion OAuth env: NOTION_CLIENT_ID, NOTION_CLIENT_SECRET, NOTION_REDIRECT_URI, NOTION_AUTH_TYPE=oauth_2
+Gmail OAuth env: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REDIRECT_URI, GMAIL_SUCCESS_REDIRECT

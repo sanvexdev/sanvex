@@ -4,7 +4,11 @@ title: Setup
 
 # GitHub setup
 
-## API key (personal access token)
+Install: `composer require sanvex/github`
+
+[GitHub configuration](./configuration) · [Integration guide](../../getting-started/integration)
+
+## API key (fastest)
 
 ```bash
 php artisan sanvex:setup github --api-key="ghp_..."
@@ -19,12 +23,8 @@ php artisan sanvex:setup github --api-key="ghp_..." \
 
 ## OAuth
 
-The driver supports OAuth2 via `GitHubKeyBuilder::setOAuthToken()`, but this repo does not ship GitHub OAuth login/callback routes. Implement OAuth in your app or store tokens programmatically.
+Implement GitHub OAuth in your app, then store tokens via `GitHubKeyBuilder::setOAuthToken()`. See [configuration](./configuration).
 
-## Credential keys
+## Usage
 
-| Key | Purpose |
-| --- | ------- |
-| `api_key` | Personal access token |
-| `access_token` | OAuth access token |
-| `webhook_secret` | Webhook signature verification (via key builder) |
+[Resources](./resources)

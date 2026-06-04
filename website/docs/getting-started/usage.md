@@ -86,5 +86,6 @@ For MCP clients, use the `sanvex_list_operations` tool after starting `php artis
 
 ## Next steps
 
+- [Integration guide](./integration) — install → connect → verify checklist
 - [Drivers](../drivers/) — per-driver setup and API surface
 - [Authentication](../concepts/authentication) — token and OAuth setup

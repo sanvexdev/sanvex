@@ -44,13 +44,14 @@ class OAuthManager
 
     public function getAuthorizationUrl(OAuthProviderConfig $config, ?string $state = null): string
     {
-        $query = http_build_query([
+        $query = http_build_query(array_filter([
             'client_id' => $config->clientId,
             'redirect_uri' => $config->redirectUri,
             'response_type' => 'code',
-            'scope' => implode(' ', $config->scopes),
+            'scope' => $config->scopes !== [] ? implode(' ', $config->scopes) : null,
             'state' => $state ?? $this->buildState(),
-        ]);
+            ...$config->authorizationParams,
+        ]));
 
         $separator = str_contains($config->authorizationUrl, '?') ? '&' : '?';
         
@@ -153,15 +154,11 @@ class OAuthManager
 
     public function exchangeCode(string $code, OAuthProviderConfig $config): bool
     {
-        // Notion requires Basic Auth for exchanging the token as per their docs
-        // So we will use withBasicAuth to encode clientId:clientSecret in the header
-        $response = Http::withBasicAuth($config->clientId, $config->clientSecret)
-            ->asForm()
-            ->post($config->tokenUrl, [
-                'grant_type' => 'authorization_code',
-                'redirect_uri' => $config->redirectUri,
-                'code' => $code,
-            ]);
+        $response = $this->postTokenRequest($config, [
+            'grant_type' => 'authorization_code',
+            'redirect_uri' => $config->redirectUri,
+            'code' => $code,
+        ]);
 
         if ($response->successful()) {
             $data = $response->json();
@@ -189,12 +186,10 @@ class OAuthManager
         // Give it a 60 second buffer to ensure request doesn't fail mid-flight
         if (time() >= ($expiresAt - 60)) {
             try {
-                $response = Http::withBasicAuth($config->clientId, $config->clientSecret)
-                    ->asForm()
-                    ->post($config->tokenUrl, [
-                        'grant_type' => 'refresh_token',
-                        'refresh_token' => $refreshToken,
-                    ]);
+                $response = $this->postTokenRequest($config, [
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => $refreshToken,
+                ]);
 
                 if ($response->successful()) {
                     $data = $response->json();
@@ -213,6 +208,31 @@ class OAuthManager
         }
 
         return false; // Not expired, or refresh failed silently
+    }
+
+    /**
+     * @param  array<string, string>  $params
+     */
+    private function postTokenRequest(OAuthProviderConfig $config, array $params): \Illuminate\Http\Client\Response
+    {
+        if ($config->tokenBodyFormat === TokenBodyFormat::Json) {
+            return Http::withBasicAuth($config->clientId, $config->clientSecret)
+                ->acceptJson()
+                ->asJson()
+                ->post($config->tokenUrl, $params);
+        }
+
+        if ($config->tokenExchange === TokenExchangeAuth::RequestBody) {
+            return Http::asForm()->post($config->tokenUrl, [
+                ...$params,
+                'client_id' => $config->clientId,
+                'client_secret' => $config->clientSecret,
+            ]);
+        }
+
+        return Http::withBasicAuth($config->clientId, $config->clientSecret)
+            ->asForm()
+            ->post($config->tokenUrl, $params);
     }
 
     protected function saveTokenResponse(array $data): void

@@ -4,6 +4,10 @@ title: Setup
 
 # Linear setup
 
+Install: `composer require sanvex/linear`
+
+**Configuration** (API key vs OAuth, `.env`, `config/sanvex.php`): [Linear configuration](./configuration)
+
 ## API key
 
 ```bash
@@ -12,11 +16,8 @@ php artisan sanvex:setup linear --api-key="lin_api_..."
 
 ## OAuth
 
-OAuth is supported via `LinearKeyBuilder::setOAuthToken()`. This repo does not ship Linear OAuth login/callback routes.
+Use `LinearKeyBuilder::setOAuthToken()` after your OAuth flow. See [configuration](./configuration).
 
-## Credential keys
+## Usage
 
-| Key | Purpose |
-| --- | ------- |
-| `api_key` | Linear API key |
-| `access_token` | OAuth access token |
+[Resources](./resources)

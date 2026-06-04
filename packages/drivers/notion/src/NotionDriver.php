@@ -4,6 +4,7 @@ namespace Sanvex\Drivers\Notion;
 
 use Sanvex\Core\Auth\KeyBuilder;
 use Sanvex\Core\Auth\OAuthProviderConfig;
+use Sanvex\Core\Auth\TokenBodyFormat;
 use Sanvex\Core\BaseDriver;
 use Sanvex\Core\DTOs\WebhookResult;
 use Sanvex\Drivers\Notion\Auth\NotionKeyBuilder;
@@ -29,7 +30,11 @@ class NotionDriver extends BaseDriver
             authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
             tokenUrl: 'https://api.notion.com/v1/oauth/token',
             redirectUri: config('sanvex.driver_configs.notion.oauth.redirect_uri', config('app.url').'/sanvex/notion/callback'),
-            scopes: []
+            scopes: [],
+            tokenBodyFormat: TokenBodyFormat::Json,
+            authorizationParams: [
+                'owner' => 'user',
+            ],
         );
     }
 

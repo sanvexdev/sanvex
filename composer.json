@@ -11,9 +11,15 @@
         "phpunit/phpunit": "^11.0",
         "orchestra/testbench": "^10.0"
     },
+    "autoload": {
+        "psr-4": {
+            "Sanvex\\Drivers\\Gmail\\": "packages/drivers/gmail/src/"
+        }
+    },
     "autoload-dev": {
         "psr-4": {
-            "Sanvex\\Core\\Tests\\": "packages/core/tests/"
+            "Sanvex\\Core\\Tests\\": "packages/core/tests/",
+            "Sanvex\\Drivers\\Gmail\\Tests\\": "packages/drivers/gmail/tests/"
         }
     },
     "repositories": [

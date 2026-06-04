@@ -12,4 +12,4 @@ title: Overview
 composer require sanvex/slack
 ```
 
-See [Setup](./setup) and [Resources](./resources).
+[Configuration](./configuration) · [Setup](./setup) · [Resources](./resources)

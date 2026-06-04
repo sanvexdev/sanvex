@@ -43,6 +43,7 @@
             "pages": [
               "index",
               "getting-started/quickstart",
+              "getting-started/integration",
               "getting-started/installation",
               "getting-started/usage"
             ]
@@ -52,7 +53,9 @@
             "pages": [
               "concepts/packages",
               "concepts/database",
+              "concepts/configuration",
               "concepts/authentication",
+              "concepts/oauth",
               "concepts/tenancy"
             ]
           },
@@ -77,6 +80,7 @@
             "group": "GitHub",
             "pages": [
               "drivers/github/overview",
+              "drivers/github/configuration",
               "drivers/github/setup",
               "drivers/github/resources"
             ]
@@ -85,6 +89,7 @@
             "group": "Gmail",
             "pages": [
               "drivers/gmail/overview",
+              "drivers/gmail/configuration",
               "drivers/gmail/setup",
               "drivers/gmail/resources"
             ]
@@ -93,6 +98,7 @@
             "group": "Linear",
             "pages": [
               "drivers/linear/overview",
+              "drivers/linear/configuration",
               "drivers/linear/setup",
               "drivers/linear/resources"
             ]
@@ -101,6 +107,7 @@
             "group": "Notion",
             "pages": [
               "drivers/notion/overview",
+              "drivers/notion/configuration",
               "drivers/notion/setup",
               "drivers/notion/resources"
             ]
@@ -109,6 +116,7 @@
             "group": "Slack",
             "pages": [
               "drivers/slack/overview",
+              "drivers/slack/configuration",
               "drivers/slack/setup",
               "drivers/slack/resources"
             ]

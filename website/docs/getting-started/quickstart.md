@@ -41,6 +41,7 @@ Use a real token in step 2. A placeholder token stores successfully but GitHub r
 
 ## Next
 
-- [Installation](./installation) — split install, more drivers, config
+- [Integration guide](./integration) — full checklist and troubleshooting
+- [Installation](./installation) — install notes and optional config publish
 - [Usage](./usage) — tenancy, webhooks, agents
 - [Drivers](../drivers/github/setup) — GitHub resources and setup

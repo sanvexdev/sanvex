@@ -8,15 +8,17 @@ Each driver declares which auth methods it supports. Credentials are stored encr
 
 ## Auth types per driver
 
-| Driver | Auth types | Default | CLI setup |
-| ------ | ---------- | ------- | --------- |
-| GitHub | `api_key`, `oauth2` | `api_key` | `--api-key` |
-| Gmail | `oauth2` | `oauth2` | No dedicated CLI flow |
-| Linear | `api_key`, `oauth2` | `api_key` | `--api-key` |
-| Notion | `api_key`, `oauth_2` | `api_key` | `--api-key` or OAuth routes |
-| Slack | `api_key`, `oauth2` | `api_key` | `--api-key`, `--bot-token` |
+| Driver | Auth types | Default | CLI setup | Env & config guide |
+| ------ | ---------- | ------- | --------- | ------------------ |
+| GitHub | `api_key`, `oauth2` | `api_key` | `--api-key` | [GitHub configuration](../drivers/github/configuration) |
+| Gmail | `oauth2` | `oauth2` | No dedicated CLI flow | [Gmail configuration](../drivers/gmail/configuration) |
+| Linear | `api_key`, `oauth2` | `api_key` | `--api-key` | [Linear configuration](../drivers/linear/configuration) |
+| Notion | `api_key`, `oauth_2` | `api_key` | `--api-key` or OAuth routes | [Notion configuration](../drivers/notion/configuration) |
+| Slack | `api_key`, `oauth2` | `api_key` | `--api-key`, `--bot-token` | [Slack configuration](../drivers/slack/configuration) |
 
 Run `php artisan sanvex:list` to see auth metadata for installed drivers.
+
+Core `SANVEX_*` settings: [Configuration](./configuration).
 
 ## Token resolution
 
@@ -50,31 +52,21 @@ Optional `--backfill` runs `sanvex:backfill` after setup (placeholder — no dri
 
 ## OAuth setup
 
-### Notion (built-in routes)
+Unified flow: [OAuth concept](./oauth) (`OAuthRoutes`, `OAuthManager`, `oauthConfig()`).
 
-Notion is the only driver with OAuth web routes in this repo.
+| Driver | Built-in OAuth routes | Configuration guide |
+| ------ | --------------------- | ------------------- |
+| Notion | Yes (`/sanvex/notion/login`) | [Notion configuration](../drivers/notion/configuration) |
+| Gmail | Yes (`/sanvex/gmail/login`) | [Gmail configuration](../drivers/gmail/configuration) |
+| GitHub, Linear, Slack | No | Each driver’s **Configuration** page under [Drivers](../drivers/) |
 
-1. Set env vars:
+**Notion:** set `NOTION_*` env vars, then visit `/sanvex/notion/login`. Active when `NOTION_CLIENT_ID` is set or `NOTION_AUTH_TYPE=oauth_2`.
 
-```env
-NOTION_CLIENT_ID=...
-NOTION_CLIENT_SECRET=...
-NOTION_REDIRECT_URI=https://your-app.test/sanvex/notion/callback
-NOTION_AUTH_TYPE=oauth_2
-```
+**Gmail:** set `GMAIL_*` env vars, then visit `/sanvex/gmail/login`. Active when `GMAIL_CLIENT_ID` is set.
 
-2. Visit `/sanvex/notion/login` to start OAuth
-3. Callback exchanges the code and stores `access_token` via `OAuthManager`
+Both use global owner scope by default. See [Integration guide](../getting-started/integration).
 
-Routes are registered when `auth_type` is `oauth_2` or `client_id` is set. The default Notion OAuth callback uses global owner scope (`resolveDriver('notion')` without `for($owner)`).
-
-Success redirect: `NOTION_SUCCESS_REDIRECT` (default `/`).
-
-### Other drivers (GitHub, Gmail, Linear, Slack)
-
-These drivers declare `oauth2` support and key builders can store OAuth tokens (`access_token`, refresh tokens), but **this repo does not ship OAuth login/callback routes** for them.
-
-To use OAuth for these drivers today, store tokens programmatically through the driver's key builder or extend your app with custom OAuth flows.
+**GitHub, Linear, Slack:** no packaged login/callback routes yet. Follow each driver’s configuration page for provider registration and env vars, then store tokens via the driver key builder or `oauth()->storeTokens()`.
 
 ## Credential keys stored
 
