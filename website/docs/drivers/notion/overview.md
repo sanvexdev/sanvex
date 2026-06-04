@@ -14,4 +14,4 @@ Notion uses `oauth_2` (underscore) in driver code, not `oauth2`.
 composer require sanvex/notion
 ```
 
-See [Setup](./setup) and [Resources](./resources).
+[Configuration](./configuration) · [Setup](./setup) · [Resources](./resources)

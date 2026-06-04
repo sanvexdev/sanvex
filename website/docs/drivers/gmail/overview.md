@@ -14,4 +14,4 @@ Install Sanvex [core and CLI](../../getting-started/installation) before adding 
 composer require sanvex/gmail
 ```
 
-See [Setup](./setup) and [Resources](./resources).
+[Configuration](./configuration) · [Setup](./setup) · [Resources](./resources)

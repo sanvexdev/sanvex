@@ -14,4 +14,4 @@ Install Sanvex [core and CLI](../../getting-started/installation) before adding 
 composer require sanvex/github
 ```
 
-See [Setup](./setup) for credentials and [Resources](./resources) for the API surface.
+[Configuration](./configuration) · [Setup](./setup) · [Resources](./resources)

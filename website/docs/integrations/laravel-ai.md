@@ -14,7 +14,7 @@ composer require sanvex/laravel-ai
 
 Requires `sanvex/core`, `laravel/ai` ^0.6.0, and Laravel 12 or 13.
 
-Configure at least one driver first (see [Quickstart](../getting-started/quickstart)). The package registers `SanvexAi` automatically as `app(SanvexAi::class)` or `app('sanvex.ai')`.
+Configure at least one driver first ([Integration guide](../getting-started/integration) or [Quickstart](../getting-started/quickstart)). The package registers `SanvexAi` as `app(SanvexAi::class)` or `app('sanvex.ai')`.
 
 ## Add tools to an agent
 
@@ -43,6 +43,8 @@ class MyAgent implements Agent, HasTools
 ```
 
 The agent receives one tool per operation (for example `Sanvex_Github_Repositories_List`) with parameters the model can fill in directly.
+
+Gmail `messages.list` returns subject, from, to, date, and snippet (not raw IDs only). Use `readOnly()` for inbox assistants.
 
 Inject `SanvexAi` in a controller or action instead of `app()` if you prefer:
 

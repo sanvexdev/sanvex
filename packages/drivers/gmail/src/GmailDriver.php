@@ -3,6 +3,8 @@
 namespace Sanvex\Drivers\Gmail;
 
 use Sanvex\Core\Auth\KeyBuilder;
+use Sanvex\Core\Auth\OAuthProviderConfig;
+use Sanvex\Core\Auth\TokenExchangeAuth;
 use Sanvex\Core\BaseDriver;
 use Sanvex\Core\DTOs\WebhookResult;
 use Sanvex\Drivers\Gmail\Auth\GmailKeyBuilder;
@@ -18,6 +20,25 @@ class GmailDriver extends BaseDriver
     public array $authTypes = ['oauth2'];
 
     public string $defaultAuthType = 'oauth2';
+
+    public function oauthConfig(): ?OAuthProviderConfig
+    {
+        return new OAuthProviderConfig(
+            clientId: config('sanvex.driver_configs.gmail.oauth.client_id', ''),
+            clientSecret: config('sanvex.driver_configs.gmail.oauth.client_secret', ''),
+            authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+            tokenUrl: 'https://oauth2.googleapis.com/token',
+            redirectUri: config('sanvex.driver_configs.gmail.oauth.redirect_uri', config('app.url').'/sanvex/gmail/callback'),
+            scopes: [
+                'https://www.googleapis.com/auth/gmail.readonly',
+            ],
+            tokenExchange: TokenExchangeAuth::RequestBody,
+            authorizationParams: [
+                'access_type' => 'offline',
+                'prompt' => 'consent',
+            ],
+        );
+    }
 
     public function messages(): MessagesResource
     {

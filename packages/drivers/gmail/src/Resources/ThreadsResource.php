@@ -10,7 +10,7 @@ class ThreadsResource extends BaseResource
     private const BASE_URL = 'https://gmail.googleapis.com/gmail/v1/users/me';
 
     #[Operation(
-        description: 'List Gmail threads for the authenticated user.',
+        description: 'List Gmail threads with id and snippet. Use q to search threads; use messages.list for subject/from per message.',
         readOnly: true,
         schema: [
             'q' => ['type' => 'string', 'description' => 'Gmail search query (e.g. "is:unread")'],

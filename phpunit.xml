@@ -7,6 +7,9 @@
         <testsuite name="Core">
             <directory>packages/core/tests</directory>
         </testsuite>
+        <testsuite name="Gmail">
+            <directory>packages/drivers/gmail/tests</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

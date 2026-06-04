@@ -52,18 +52,18 @@ return [
     | Driver Configurations
     |--------------------------------------------------------------------------
     |
-    | Centralized configurations specific to each integrated driver.
+    | Per-driver OAuth and auth settings. Only add entries for drivers you use.
     |
     */
     'driver_configs' => [
-        'notion' => [
-            'auth_type' => env('NOTION_AUTH_TYPE', 'api_key'),
-            'oauth' => [
-                'client_id' => env('NOTION_CLIENT_ID', ''),
-                'client_secret' => env('NOTION_CLIENT_SECRET', ''),
-                'redirect_uri' => env('NOTION_REDIRECT_URI', env('APP_URL') . '/sanvex/notion/callback'),
-                'success_redirect' => env('NOTION_SUCCESS_REDIRECT', '/'),
-            ],
-        ],
+        // '{driver_id}' => [
+        //     'auth_type' => env('{DRIVER}_AUTH_TYPE', 'api_key'),
+        //     'oauth' => [
+        //         'client_id' => env('{DRIVER}_CLIENT_ID', ''),
+        //         'client_secret' => env('{DRIVER}_CLIENT_SECRET', ''),
+        //         'redirect_uri' => env('{DRIVER}_REDIRECT_URI', env('APP_URL') . '/sanvex/{driver}/callback'),
+        //         'success_redirect' => env('{DRIVER}_SUCCESS_REDIRECT', '/'),
+        //     ],
+        // ],
     ],
 ];

@@ -6,6 +6,8 @@ title: Installation
 
 PHP 8.2+, Laravel 12 or 13, and Composer.
 
+For a single checklist with troubleshooting, use the [Integration guide](./integration).
+
 ## 1. Install Sanvex
 
 ```bash
@@ -13,53 +15,86 @@ composer require sanvex/core sanvex/cli
 php artisan migrate
 ```
 
-`php artisan migrate` creates the `sv_*` tables (and your normal Laravel tables on a new app). You do not need a separate Sanvex migrate command.
+`php artisan migrate` creates the `sv_*` tables (Sanvex migrations ship with `sanvex/core` and load automatically). You do not need a separate Sanvex migrate command.
 
-## 2. Add drivers
-
-```bash
-composer require sanvex/github
-# composer require sanvex/gmail
-# composer require sanvex/linear
-# composer require sanvex/notion
-# composer require sanvex/slack
-```
-
-Confirm the driver is registered:
+Confirm:
 
 ```bash
 php artisan sanvex:list
 ```
 
-## 3. Store credentials
+## 2. Add drivers
+
+```bash
+composer require sanvex/gmail
+# composer require sanvex/github
+# composer require sanvex/linear
+# composer require sanvex/notion
+# composer require sanvex/slack
+```
+
+Run `php artisan sanvex:list` again — the new driver should appear.
+
+## 3. Configuration
+
+### Environment variables
+
+Set driver variables in `.env` (see each driver’s [Configuration](../drivers/) page). Example for Gmail OAuth:
+
+```env
+GMAIL_CLIENT_ID=....apps.googleusercontent.com
+GMAIL_CLIENT_SECRET=...
+GMAIL_REDIRECT_URI="${APP_URL}/sanvex/gmail/callback"
+GMAIL_SUCCESS_REDIRECT=/
+```
+
+`APP_URL` must match your running app and the provider’s redirect URI in their console.
+
+### Publish config (optional)
+
+```bash
+php artisan vendor:publish --tag=sanvex-config
+```
+
+Only needed if you want to edit `config/sanvex.php` in your app (custom `drivers` array, overrides). `.env` alone is enough for most installs.
+
+### Encryption key (optional)
+
+```bash
+php artisan sanvex:keygen
+```
+
+Copy the printed line into `.env` as `SANVEX_KEK=...`. If omitted, Sanvex uses `APP_KEY`.
+
+Per-driver details: [Drivers](../drivers/). Core settings: [Configuration](../concepts/configuration).
+
+## 4. Store credentials
+
+**API key drivers** (GitHub, Notion internal, etc.):
 
 ```bash
 php artisan sanvex:setup github --api-key="ghp_..."
 ```
 
-Per-team or per-user keys:
+**OAuth drivers** (Gmail, Notion public) — set client ID/secret in `.env`, then visit the built-in login URL (routes register when client ID is set):
 
-```bash
-php artisan sanvex:setup notion --api-key="secret_..." \
-  --owner-type=App\\Models\\Team --owner-id=1
-```
+| Driver | Connect URL |
+| ------ | ----------- |
+| Gmail | `GET /sanvex/gmail/login` |
+| Notion | `GET /sanvex/notion/login` |
 
-More per driver: [Drivers](../drivers/) and [Authentication](../concepts/authentication).
+See [Gmail configuration](../drivers/gmail/configuration) and [Notion configuration](../drivers/notion/configuration).
 
-## 4. Verify
+## 5. Verify
 
 ```php
 use Sanvex\Core\SanvexManager;
 
-$driver = app(SanvexManager::class)->resolveDriver('github');
-
-$driver->isConfigured(); // true after sanvex:setup
+app(SanvexManager::class)->resolveDriver('gmail')->isConfigured();
 ```
 
-Or from the shell:
-
 ```bash
-php artisan tinker --execute="dump(app(\Sanvex\Core\SanvexManager::class)->resolveDriver('github')->isConfigured());"
+php artisan tinker --execute="dump(app(\Sanvex\Core\SanvexManager::class)->resolveDriver('gmail')->isConfigured());"
 ```
 
 ## Agent packages (optional)
@@ -71,26 +106,6 @@ composer require sanvex/mcp
 
 [Laravel AI](../integrations/laravel-ai) · [MCP](../integrations/mcp)
 
-## Configuration (optional)
-
-Skip publishing if defaults are enough. To customize drivers or encryption:
-
-```bash
-php artisan vendor:publish --tag=sanvex-config
-```
-
-Dedicated encryption key (optional):
-
-```bash
-php artisan sanvex:keygen
-```
-
-Copy the printed line into `.env` as `SANVEX_KEK=...`. If omitted, Sanvex uses `APP_KEY`.
-
-Add custom driver classes under `drivers` in `config/sanvex.php`.
-
-[Database](../concepts/database) · [Packages](../concepts/packages)
-
 ## Next step
 
-[Usage](./usage)
+[Usage](./usage) · [Quickstart](./quickstart) · [Database](../concepts/database)
